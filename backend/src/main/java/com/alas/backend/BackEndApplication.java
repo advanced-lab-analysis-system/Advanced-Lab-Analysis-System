@@ -1,4 +1,4 @@
-package com.narasimha.alas.backend;
+package com.alas.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

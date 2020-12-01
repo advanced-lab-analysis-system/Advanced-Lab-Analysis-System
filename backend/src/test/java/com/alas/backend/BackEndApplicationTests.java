@@ -1,4 +1,4 @@
-package com.narasimha.alas.backend;
+package com.alas.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
