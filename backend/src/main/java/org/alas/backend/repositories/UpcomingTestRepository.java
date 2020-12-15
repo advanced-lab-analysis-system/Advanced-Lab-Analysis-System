@@ -1,6 +1,6 @@
-package org.alas.backend.repository;
+package org.alas.backend.repositories;
 
-import org.alas.backend.model.Exam;
+import org.alas.backend.documents.Exam;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;
 
