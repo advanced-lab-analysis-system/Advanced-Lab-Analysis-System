@@ -1,4 +1,4 @@
-package com.alas.backend;
+package org.alas.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
