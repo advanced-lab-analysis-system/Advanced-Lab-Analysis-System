@@ -20,8 +20,8 @@ public class ExamController {
 
     @PostMapping("/exam")
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<ResponseEntity<?>> createExam(@RequestBody Exam exam){
+    public ResponseEntity<?> createExam(@RequestBody Exam exam){
         examService.createExam(exam);
-        return Mono.just(new ResponseEntity<>(HttpStatus.CREATED));
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
