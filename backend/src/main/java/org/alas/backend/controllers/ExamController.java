@@ -1,18 +1,15 @@
 package org.alas.backend.controllers;
 
-import org.alas.backend.documents.Exam;
+import org.alas.backend.dto.Exam;
+import org.alas.backend.documents.ExamData;
 import org.alas.backend.services.ExamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
 
 @RestController
 public class ExamController {
@@ -21,8 +18,8 @@ public class ExamController {
     ExamService examService;
 
     @PostMapping("/author/exam")
-    public ResponseEntity<?> createExam(@RequestBody Exam exam) {
-        examService.createExam(exam).subscribe();
+    public ResponseEntity<?> createExam(@RequestBody ExamData examData) {
+        examService.createExam(examData).subscribe();
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -32,4 +29,9 @@ public class ExamController {
         return new ResponseEntity<>(examlist,HttpStatus.OK);
     }
 
+    @GetMapping("/candidate/exams/{exam_id}")
+    public ResponseEntity<?> getExamById(@PathVariable String exam_id){
+        Mono<ExamData> examDataMono=examService.getExamById(exam_id);
+        return new ResponseEntity<>(examDataMono,HttpStatus.OK);
+    }
 }

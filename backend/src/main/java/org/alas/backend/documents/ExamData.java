@@ -1,29 +1,30 @@
 package org.alas.backend.documents;
 
-import com.mongodb.lang.NonNull;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document
-@Data
+@Document(collection = "ExamData")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Exam {
+@Data
+public class ExamData {
 
+    @Indexed(unique = true)
     private String exam_id;
     private String batch_id;
     private String exam_name;
     private String exam_type;
     private String subject;
+    private int no_of_questions;
     private String exam_date;
     private String exam_start_time;
     private String exam_end_time;
-    private String conductedBy;
+    private String author;
     private String class_and_section;
-    private String exam_status;
+    private boolean exam_completed;
 
+    private Object questions;
 }
