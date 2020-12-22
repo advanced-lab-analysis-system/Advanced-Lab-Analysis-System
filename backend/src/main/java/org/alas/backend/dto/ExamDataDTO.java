@@ -1,21 +1,16 @@
-package org.alas.backend.documents;
+package org.alas.backend.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-@Document(collection = "ExamData")
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class ExamData {
+public class ExamDataDTO {
 
-    @Indexed(unique = true)
     private String exam_id;
     private String batch_id;
     private String exam_name;
@@ -28,6 +23,5 @@ public class ExamData {
     private String author;
     private String class_and_section;
     private boolean exam_completed;
-    private List<QuestionData> questions;
-
+    private List<QuestionsDTO> questions;
 }
