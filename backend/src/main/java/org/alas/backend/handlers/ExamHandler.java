@@ -1,4 +1,4 @@
-package org.alas.backend.services;
+package org.alas.backend.handlers;
 
 
 import org.alas.backend.dto.Exam;
@@ -13,12 +13,12 @@ import reactor.core.publisher.Mono;
 import java.util.stream.Collectors;
 
 @Service
-public class ExamService {
+public class ExamHandler {
 
     final
     ExamRepository examRepository;
 
-    public ExamService(ExamRepository examRepository) {
+    public ExamHandler(ExamRepository examRepository) {
         this.examRepository = examRepository;
     }
 
