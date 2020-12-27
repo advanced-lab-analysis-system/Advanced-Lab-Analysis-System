@@ -1,8 +1,8 @@
 package org.alas.backend.handlers;
 
 
-import org.alas.backend.dto.Exam;
-import org.alas.backend.documents.ExamData;
+import org.alas.backend.dto.ExamDTO;
+import org.alas.backend.documents.Exam;
 import org.alas.backend.dto.ExamDataDTO;
 import org.alas.backend.dto.QuestionsDTO;
 import org.alas.backend.repositories.ExamRepository;
@@ -22,46 +22,46 @@ public class ExamHandler {
         this.examRepository = examRepository;
     }
 
-    public Mono<ExamData> createExam(ExamData examData) {
-        return examRepository.save(examData);
+    public Mono<Exam> createExam(Exam exam) {
+        return examRepository.save(exam);
     }
 
-    public Flux<Exam> getAllExams(){
-        return examRepository.findAll().map(examData ->
-                new Exam(examData.getExam_id(),
-                examData.getBatch_id(),
-                examData.getExam_name(),
-                examData.getExam_type(),
-                examData.getSubject(),
-                examData.getNo_of_questions(),
-                examData.getExam_date(),
-                examData.getExam_start_time(),
-                examData.getExam_end_time(),
-                examData.getAuthor(),
-                examData.getClass_and_section(),
-                examData.isExam_completed()
+    public Flux<ExamDTO> getAllExams(){
+        return examRepository.findAll().map(exam ->
+                new ExamDTO(exam.getExam_id(),
+                exam.getBatch_id(),
+                exam.getExam_name(),
+                exam.getExam_type(),
+                exam.getSubject(),
+                exam.getNo_of_questions(),
+                exam.getExam_date(),
+                exam.getExam_start_time(),
+                exam.getExam_end_time(),
+                exam.getAuthor(),
+                exam.getClass_and_section(),
+                exam.isExam_completed()
                 ));
     }
 
-    public Mono<ExamData> getExamWithAnswersById(String exam_id){
+    public Mono<Exam> getExamWithAnswersById(String exam_id){
         return examRepository.findByExam_id(exam_id);
     }
 
     public Mono<ExamDataDTO> getExamWithoutAnswersById(String exam_id){
-        return examRepository.findByExam_id(exam_id).map(examData ->
-                new ExamDataDTO(examData.getExam_id(),
-                        examData.getBatch_id(),
-                        examData.getExam_name(),
-                        examData.getExam_type(),
-                        examData.getSubject(),
-                        examData.getNo_of_questions(),
-                        examData.getExam_date(),
-                        examData.getExam_start_time(),
-                        examData.getExam_end_time(),
-                        examData.getAuthor(),
-                        examData.getClass_and_section(),
-                        examData.isExam_completed(),
-                        examData.getQuestions().stream().map(questionData ->
+        return examRepository.findByExam_id(exam_id).map(exam ->
+                new ExamDataDTO(exam.getExam_id(),
+                        exam.getBatch_id(),
+                        exam.getExam_name(),
+                        exam.getExam_type(),
+                        exam.getSubject(),
+                        exam.getNo_of_questions(),
+                        exam.getExam_date(),
+                        exam.getExam_start_time(),
+                        exam.getExam_end_time(),
+                        exam.getAuthor(),
+                        exam.getClass_and_section(),
+                        exam.isExam_completed(),
+                        exam.getQuestions().stream().map(questionData ->
                                 new QuestionsDTO(questionData.getQid(), questionData.getOptions())).collect(Collectors.toList())));
     }
 }

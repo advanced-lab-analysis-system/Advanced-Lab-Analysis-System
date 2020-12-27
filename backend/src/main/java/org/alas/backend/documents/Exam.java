@@ -3,17 +3,16 @@ package org.alas.backend.documents;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-@Document(collection = "ExamData")
+@Document(collection = "Exam")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ExamData {
+public class Exam {
 
     @Indexed(unique = true)
     private String exam_id;
@@ -28,6 +27,6 @@ public class ExamData {
     private String author;
     private String class_and_section;
     private boolean exam_completed;
-    private List<QuestionData> questions;
+    private List<Question> questions;
 
 }

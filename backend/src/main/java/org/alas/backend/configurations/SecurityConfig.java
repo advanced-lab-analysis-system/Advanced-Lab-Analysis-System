@@ -1,6 +1,7 @@
 package org.alas.backend.configurations;
 
 import lombok.var;
+import org.alas.backend.repositories.UserRepository;
 import org.alas.backend.security.jwt.JwtAuthenticationFilter;
 import org.alas.backend.security.jwt.JwtProvider;
 import org.springframework.context.annotation.Bean;
@@ -59,20 +60,20 @@ public class SecurityConfig {
     }
 
 //    TODO : Refactor the below function to use the UserRepository
-//    @Bean
-//    public ReactiveUserDetailsService userDetailsService(UserRepository users) {
-//
-//        return username -> users.findByUsername(username)
-//                .map(u -> User
-//                        .withUsername(u.getUsername()).password(u.getPassword())
-//                        .authorities(u.getRoles().toArray(new String[0]))
-//                        .accountExpired(!u.isActive())
-//                        .credentialsExpired(!u.isActive())
-//                        .disabled(!u.isActive())
-//                        .accountLocked(!u.isActive())
-//                        .build()
-//                );
-//    }
+    @Bean
+    public ReactiveUserDetailsService userDetailsService(UserRepository users) {
+
+        return username -> users.findByUsername(username)
+                .map(u -> User
+                        .withUsername(u.getUsername()).password(u.getPassword())
+                        .authorities(u.getRoles().toArray(new String[0]))
+                        .accountExpired(!u.isActive())
+                        .credentialsExpired(!u.isActive())
+                        .disabled(!u.isActive())
+                        .accountLocked(!u.isActive())
+                        .build()
+                );
+    }
 
     @Bean
     public ReactiveAuthenticationManager reactiveAuthenticationManager(ReactiveUserDetailsService userDetailsService,

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Exam {
+public class ExamDTO {
 
     private String exam_id;
     private String batch_id;
