@@ -4,7 +4,7 @@ package org.alas.backend.services;
 import org.alas.backend.dto.Exam;
 import org.alas.backend.documents.ExamData;
 import org.alas.backend.dto.ExamDataDTO;
-import org.alas.backend.dto.QuestionsDTO;
+import org.alas.backend.dto.QuestionDTO;
 import org.alas.backend.repositories.ExamRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -62,6 +62,6 @@ public class ExamService {
                         examData.getClass_and_section(),
                         examData.isExam_completed(),
                         examData.getQuestions().stream().map(questionData ->
-                                new QuestionsDTO(questionData.getQid(), questionData.getOptions())).collect(Collectors.toList())));
+                                new QuestionDTO(questionData.getQid(), questionData.getOptions())).collect(Collectors.toList())));
     }
 }

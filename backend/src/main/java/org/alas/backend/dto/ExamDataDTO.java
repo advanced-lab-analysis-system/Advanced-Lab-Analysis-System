@@ -23,5 +23,5 @@ public class ExamDataDTO {
     private String author;
     private String class_and_section;
     private boolean exam_completed;
-    private List<QuestionsDTO> questions;
+    private List<QuestionDTO> questions;
 }
