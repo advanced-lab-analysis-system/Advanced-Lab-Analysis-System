@@ -23,7 +23,7 @@ public class ExamController {
 
     @PostMapping("/author/exam")
     public ResponseEntity<?> createExam(@RequestBody Exam exam) {
-        Mono<?> examDataMono= examHandler.createExam(exam);
+        Mono<?> examDataMono = examHandler.createExam(exam);
         return new ResponseEntity<>(examDataMono,HttpStatus.CREATED);
     }
 
