@@ -12,13 +12,8 @@ import reactor.core.publisher.Mono;
 
 public class CustomSubmissionRepositoryImpl implements CustomSubmissionRepository {
 
-    ReactiveMongoTemplate reactiveMongoTemplate;
-
     @Autowired
-    public CustomSubmissionRepositoryImpl(ReactiveMongoTemplate reactiveMongoTemplate){
-        this.reactiveMongoTemplate=reactiveMongoTemplate;
-    }
-
+    private ReactiveMongoTemplate reactiveMongoTemplate;
 
     @Override
     public Mono<?> findAndUpdateSubmissionByExam_idAndCandidate_id(String exam_id, String candidate_id, QuestionMCQ questionMCQ) {
