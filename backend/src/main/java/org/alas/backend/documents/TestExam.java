@@ -1,22 +1,24 @@
 package org.alas.backend.documents;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.alas.backend.dto.QuestionMCQ;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 import java.util.Map;
 
-@Document(collection = "Exam")
+@Document(collection = "TestExam")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Exam {
+public class TestExam {
 
-    private String exam_id;
+    @Indexed(unique = true)
+    private String testExam_id;
     private String batch_id;
     private String exam_name;
     private String exam_type;
@@ -29,4 +31,7 @@ public class Exam {
     private String class_and_section;
     private boolean exam_completed;
     private List<Question> questions;
+    private long time_limit;
+    private Map<String, QuestionMCQ> all_submissions;
+
 }

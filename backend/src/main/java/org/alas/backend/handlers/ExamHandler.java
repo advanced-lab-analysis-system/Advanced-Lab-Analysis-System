@@ -4,7 +4,7 @@ package org.alas.backend.handlers;
 import org.alas.backend.dto.ExamDTO;
 import org.alas.backend.documents.Exam;
 import org.alas.backend.dto.ExamDataDTO;
-import org.alas.backend.dto.QuestionsDTO;
+import org.alas.backend.dto.QuestionDTO;
 import org.alas.backend.repositories.ExamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,6 +59,6 @@ public class ExamHandler {
                         exam.getClass_and_section(),
                         exam.isExam_completed(),
                         exam.getQuestions().stream().map(questionData ->
-                                new QuestionsDTO(questionData.getQid(), questionData.getOptions())).collect(Collectors.toList())));
+                                new QuestionDTO(questionData.getQid(), questionData.getOptions())).collect(Collectors.toList())));
     }
 }
