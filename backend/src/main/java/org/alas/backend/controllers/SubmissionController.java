@@ -15,8 +15,8 @@ public class SubmissionController {
     SubmissionHandler submissionHandler;
 
     @PostMapping("/v2/candidate/exams/{exam_id}")
-    public ResponseEntity<?> addSubmission(@PathVariable String exam_id, @RequestHeader String candidate_id, @RequestBody QuestionMCQ questionMCQ){
-        Mono<?> addedSubmission = submissionHandler.addSubmissionV2(exam_id,candidate_id, questionMCQ);
-        return new ResponseEntity<>(addedSubmission,HttpStatus.CREATED);
+    public ResponseEntity<?> addSubmission(@PathVariable String exam_id, @RequestHeader String candidate_id, @RequestBody QuestionMCQ questionMCQ) {
+        Mono<?> addedSubmission = submissionHandler.addSubmissionV2(exam_id, candidate_id, questionMCQ);
+        return new ResponseEntity<>(addedSubmission, HttpStatus.CREATED);
     }
 }

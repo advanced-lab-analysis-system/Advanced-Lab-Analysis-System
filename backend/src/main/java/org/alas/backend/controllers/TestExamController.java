@@ -24,14 +24,14 @@ public class TestExamController {
     }
 
     @GetMapping("/v2/author/exams/{exam_id}")
-    public ResponseEntity<?> getExamWithAnswersById(@PathVariable String exam_id){
-        Mono<TestExam> testExamMono= testExamHandler.getExamWithAnswersById(exam_id);
-        return new ResponseEntity<>(testExamMono,HttpStatus.OK);
+    public ResponseEntity<?> getExamWithAnswersById(@PathVariable String exam_id) {
+        Mono<TestExam> testExamMono = testExamHandler.getExamWithAnswersById(exam_id);
+        return new ResponseEntity<>(testExamMono, HttpStatus.OK);
     }
 
     @GetMapping("/v2/candidate/exams")
-    public ResponseEntity<?> getAllExams(){
-        Flux<TestExam> testExamFlux= testExamHandler.getAllExams();
-        return new ResponseEntity<>(testExamFlux,HttpStatus.OK);
+    public ResponseEntity<?> getAllExams() {
+        Flux<TestExam> testExamFlux = testExamHandler.getAllExams();
+        return new ResponseEntity<>(testExamFlux, HttpStatus.OK);
     }
 }

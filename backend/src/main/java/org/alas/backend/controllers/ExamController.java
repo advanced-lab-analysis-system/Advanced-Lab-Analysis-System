@@ -24,26 +24,24 @@ public class ExamController {
     @PostMapping("/author/exam")
     public ResponseEntity<?> createExam(@RequestBody Exam exam) {
         Mono<?> examDataMono = examHandler.createExam(exam);
-        return new ResponseEntity<>(examDataMono,HttpStatus.CREATED);
+        return new ResponseEntity<>(examDataMono, HttpStatus.CREATED);
     }
 
     @GetMapping("/author/exams/{exam_id}")
-    public ResponseEntity<?> getExamWithAnswersById(@PathVariable String exam_id){
-        //Mono<ExamData> examDataMono=examService.getExamById(exam_id);
-        Mono<Exam> examDataDTOMono= examHandler.getExamWithAnswersById(exam_id);
-        return new ResponseEntity<>(examDataDTOMono,HttpStatus.OK);
+    public ResponseEntity<?> getExamWithAnswersById(@PathVariable String exam_id) {
+        Mono<Exam> examDataDTOMono = examHandler.getExamWithAnswersById(exam_id);
+        return new ResponseEntity<>(examDataDTOMono, HttpStatus.OK);
     }
 
     @GetMapping("/candidate/exams")
-    public ResponseEntity<?> getAllExams(){
-        Flux<ExamDTO> examFlux= examHandler.getAllExams();
-        return new ResponseEntity<>(examFlux,HttpStatus.OK);
+    public ResponseEntity<?> getAllExams() {
+        Flux<ExamDTO> examFlux = examHandler.getAllExams();
+        return new ResponseEntity<>(examFlux, HttpStatus.OK);
     }
 
     @GetMapping("/candidate/exams/{exam_id}")
-    public ResponseEntity<?> getExamWithoutAnswersById(@PathVariable String exam_id){
-        //Mono<ExamData> examDataMono=examService.getExamById(exam_id);
-        Mono<ExamDataDTO> examDataDTOMono= examHandler.getExamWithoutAnswersById(exam_id);
-        return new ResponseEntity<>(examDataDTOMono,HttpStatus.OK);
+    public ResponseEntity<?> getExamWithoutAnswersById(@PathVariable String exam_id) {
+        Mono<ExamDataDTO> examDataDTOMono = examHandler.getExamWithoutAnswersById(exam_id);
+        return new ResponseEntity<>(examDataDTOMono, HttpStatus.OK);
     }
 }

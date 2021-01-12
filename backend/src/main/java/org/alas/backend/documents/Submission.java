@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@CompoundIndex(name = "exam_id_and_candidate_id",def = "{'exam_id':1,'candidate_id':1}")
+@CompoundIndex(name = "exam_id_and_candidate_id", def = "{'exam_id':1,'candidate_id':1}")
 public class Submission {
 
     private String exam_id;

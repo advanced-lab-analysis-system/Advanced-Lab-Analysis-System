@@ -1,33 +1,28 @@
 package org.alas.backend.controllers;
 
-import org.alas.backend.documents.Ping;
-import org.alas.backend.handlers.PingHandler;
+import org.alas.backend.spark.services.WordCountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Flux;
 
-import java.util.Date;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 public class PingController {
-
     @Autowired
-    private PingHandler pingHandler;
+    WordCountService wordCountService;
 
-    @GetMapping(value = "/ping/save")
-    public ResponseEntity<?> savePing(){
-        Date date = new Date();
-        Ping ping = new Ping(date.toString());
-        pingHandler.savePing(ping);
-        return ResponseEntity.ok().build();
-    }
+    @GetMapping(value = "/ping")
+    public ResponseEntity<?> savePing() {
+        List<String> wordList = Arrays.asList("word 1", "word 1", "word 2", "word 3", "word 3", "word 3");
+        Map<String, Long> wordCount = wordCountService.getCount(wordList);
 
-    @GetMapping(value = "/ping/all")
-    public ResponseEntity<?> getPings(){
-        Flux<Ping> pings = pingHandler.getPings();
-        return new ResponseEntity<>(pings, HttpStatus.OK);
+        System.out.println(wordCount);
+
+        return new ResponseEntity<>("Server Alive", HttpStatus.OK);
     }
 }
