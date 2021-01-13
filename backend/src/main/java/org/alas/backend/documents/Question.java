@@ -13,4 +13,8 @@ public class Question {
     private String questionId;
     private List<String> options;
     private String answer;
+
+    public String getQuestionId(){
+        return questionId;
+    }
 }

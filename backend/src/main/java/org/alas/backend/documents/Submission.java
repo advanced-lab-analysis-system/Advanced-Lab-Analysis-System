@@ -20,10 +20,10 @@ public class Submission {
 
     private String examId;
     private String candidateId;
-    private Map<String, MCQSubmission> questions;
+    private Map<String, MCQSubmission> allSubmissions;
 
     public Submission updateVisit(VisitDTO visit) {
-        questions.get(visit.getQuestionId())
+        allSubmissions.get(visit.getQuestionId())
                 .addVisit(new VisitDetails(visit.getVisitStartTime(), visit.getVisitEndTime(), visit.getSelectedAnswer()));
         return this;
     }

@@ -21,9 +21,9 @@ public class CustomizedSubmissionRepositoryImpl implements CustomizedSubmissionR
         query.addCriteria(Criteria.where("examId").is(examId))
                 .addCriteria(Criteria.where("candidateId").is(candidateId));
         Update update = new Update();
-        update.push("questions." + key + ".visits", new VisitDetails(visit.getVisitStartTime(), visit.getVisitEndTime(), visit.getSelectedAnswer()));
-        update.set("questions." + key + ".finalAnswer", visit.getSelectedAnswer());
-        update.inc("questions." + key + ".totalVisits");
+        update.push("allSubmissions." + key + ".visits", new VisitDetails(visit.getVisitStartTime(), visit.getVisitEndTime(), visit.getSelectedAnswer()));
+        update.set("allSubmissions." + key + ".finalAnswer", visit.getSelectedAnswer());
+        update.inc("allSubmissions." + key + ".totalVisits");
 
         return reactiveMongoTemplate.upsert(query, update, Submission.class);
     }

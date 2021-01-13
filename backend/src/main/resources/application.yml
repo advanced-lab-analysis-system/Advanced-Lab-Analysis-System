@@ -5,10 +5,10 @@ spring:
       uri: mongodb+srv://pythxnbite:Ucantcmee6960@alas-dev.eenwz.mongodb.net/test?retryWrites=true&w=majority
       auto-index-creation: true
 
-spark:
-  app:
-    name: "ALAS Exam Performance Analyser"
-  master: local[1]
+#spark:
+#  app:
+#    name: "ALAS Exam Performance Analyser"
+#  master: local[1]
 
 server:
   port: 9000

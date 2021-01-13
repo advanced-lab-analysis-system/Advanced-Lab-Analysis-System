@@ -34,10 +34,16 @@ public class ExamController {
         return new ResponseEntity<>(examDataMono, HttpStatus.CREATED);
     }
 
-    @GetMapping("/author/exams/{exam_id}")
-    public ResponseEntity<?> getExamWithAnswersById(@PathVariable String exam_id) {
-        Mono<Exam> examDataDTOMono = examHandler.getExamWithAnswersById(exam_id);
+    @GetMapping("/author/exams/{examId}")
+    public ResponseEntity<?> getExamWithAnswersById(@PathVariable String examId) {
+        Mono<Exam> examDataDTOMono = examHandler.getExamWithAnswersById(examId);
         return new ResponseEntity<>(examDataDTOMono, HttpStatus.OK);
+    }
+
+    @GetMapping("/author/exams/{examId}/end")
+    public ResponseEntity<?> endExam(@PathVariable String examId) {
+        examHandler.endExamByExamId(examId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/candidate/exams")
@@ -46,9 +52,9 @@ public class ExamController {
         return new ResponseEntity<>(examFlux, HttpStatus.OK);
     }
 
-    @GetMapping("/candidate/exams/{exam_id}")
-    public ResponseEntity<?> getExamWithoutAnswersById(@PathVariable String exam_id) {
-        Mono<ExamDataDTO> examDataDTOMono = examHandler.getExamWithoutAnswersById(exam_id);
+    @GetMapping("/candidate/exams/{examId}")
+    public ResponseEntity<?> getExamWithoutAnswersById(@PathVariable String examId) {
+        Mono<ExamDataDTO> examDataDTOMono = examHandler.getExamWithoutAnswersById(examId);
         return new ResponseEntity<>(examDataDTOMono, HttpStatus.OK);
     }
 
@@ -56,6 +62,7 @@ public class ExamController {
     public ResponseEntity<?> newSubmission(@RequestParam String examId, @RequestParam String candidateId, @RequestBody VisitDTO visit) {
         System.out.println(visit);
         Mono<?> addedSubmission = submissionHandler.addVisit(examId, candidateId, visit);
-        return new ResponseEntity<>(Duration.between(visit.getVisitStartTime(), visit.getVisitEndTime()).getSeconds(), HttpStatus.CREATED);
+        //addedSubmission.subscribe();
+        return new ResponseEntity<>(addedSubmission, HttpStatus.CREATED);
     }
 }

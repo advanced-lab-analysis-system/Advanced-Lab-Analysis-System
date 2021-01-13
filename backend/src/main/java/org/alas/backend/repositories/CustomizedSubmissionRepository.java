@@ -1,6 +1,5 @@
 package org.alas.backend.repositories;
 
-import org.alas.backend.dto.MCQSubmission;
 import org.alas.backend.dto.VisitDTO;
 import reactor.core.publisher.Mono;
 
