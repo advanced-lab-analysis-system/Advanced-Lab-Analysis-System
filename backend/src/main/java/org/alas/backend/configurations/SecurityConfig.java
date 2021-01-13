@@ -45,7 +45,7 @@ public class SecurityConfig {
 //                        .pathMatchers(HttpMethod.GET, "/candidate/**").hasRole("ROLE_CANDIDATE")
 //                        .pathMatchers(HttpMethod.POST, "/author/**").hasRole("ROLE_AUTHOR")
 //                        .pathMatchers(HttpMethod.GET, "/author/**").hasRole("ROLE_AUTHOR")
-                        .pathMatchers(PROTECTED_PATHS).authenticated()
+//                        .pathMatchers(PROTECTED_PATHS).authenticated()
                         .anyExchange().permitAll()
                 )
                 .addFilterAt(new JwtAuthenticationFilter(tokenProvider), SecurityWebFiltersOrder.HTTP_BASIC)

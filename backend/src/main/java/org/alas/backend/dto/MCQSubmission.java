@@ -14,10 +14,10 @@ public class MCQSubmission {
     private int totalVisits;
     private List<VisitDetails> visits;
 
-    public MCQSubmission(){
-        this.finalAnswer="";
-        this.totalVisits=0;
-        this.visits=new ArrayList<>();
+    public MCQSubmission() {
+        this.finalAnswer = "";
+        this.totalVisits = 0;
+        this.visits = new ArrayList<>();
     }
 
     public void addVisit(VisitDetails visitDetails) {
