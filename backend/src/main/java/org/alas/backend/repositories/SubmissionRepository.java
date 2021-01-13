@@ -14,12 +14,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
-public interface SubmissionRepository extends ReactiveMongoRepository<Submission, String>, CustomizedSubmissionRepository {
+public interface SubmissionRepository extends ReactiveMongoRepository<Submission,String>, CustomizedSubmissionRepository {
 
     Mono<Submission> findByExamIdAndCandidateId(String examId, String candidateId);
 
     Flux<Submission> findAllByExamId(String examId);
-
 
 }
 
