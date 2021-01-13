@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-@RestController
+//@RestController
 public class PingController {
     @Autowired
     WordCountService wordCountService;
