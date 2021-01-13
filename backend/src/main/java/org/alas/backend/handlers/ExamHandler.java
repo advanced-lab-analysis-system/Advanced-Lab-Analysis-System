@@ -25,40 +25,36 @@ public class ExamHandler {
 
     public Flux<ExamDTO> getAllExams() {
         return examRepository.findAll().map(exam ->
-                new ExamDTO(exam.getExam_id(),
-                        exam.getBatch_id(),
-                        exam.getExam_name(),
-                        exam.getExam_type(),
+                new ExamDTO(exam.getExamId(),
+                        exam.getBatchId(),
+                        exam.getExamName(),
                         exam.getSubject(),
-                        exam.getNo_of_questions(),
-                        exam.getExam_date(),
-                        exam.getExam_start_time(),
-                        exam.getExam_end_time(),
+                        exam.getNoOfQuestions(),
+                        exam.getExamDate(),
+                        exam.getExamStartTime(),
+                        exam.getExamEndTime(),
                         exam.getAuthor(),
-                        exam.getClass_and_section(),
-                        exam.isExam_completed()
+                        exam.getStatus()
                 ));
     }
 
     public Mono<Exam> getExamWithAnswersById(String exam_id) {
-        return examRepository.findByExam_id(exam_id);
+        return examRepository.findByExamId(exam_id);
     }
 
     public Mono<ExamDataDTO> getExamWithoutAnswersById(String exam_id) {
-        return examRepository.findByExam_id(exam_id).map(exam ->
-                new ExamDataDTO(exam.getExam_id(),
-                        exam.getBatch_id(),
-                        exam.getExam_name(),
-                        exam.getExam_type(),
+        return examRepository.findByExamId(exam_id).map(exam ->
+                new ExamDataDTO(exam.getExamId(),
+                        exam.getBatchId(),
+                        exam.getExamName(),
                         exam.getSubject(),
-                        exam.getNo_of_questions(),
-                        exam.getExam_date(),
-                        exam.getExam_start_time(),
-                        exam.getExam_end_time(),
+                        exam.getNoOfQuestions(),
+                        exam.getExamDate(),
+                        exam.getExamStartTime(),
+                        exam.getExamEndTime(),
                         exam.getAuthor(),
-                        exam.getClass_and_section(),
-                        exam.isExam_completed(),
+                        exam.getStatus(),
                         exam.getQuestions().stream().map(questionData ->
-                                new QuestionDTO(questionData.getQid(), questionData.getOptions())).collect(Collectors.toList())));
+                                new QuestionDTO(questionData.getQuestionId(), questionData.getOptions())).collect(Collectors.toList())));
     }
 }

@@ -10,17 +10,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ExamDTO {
 
-    private String exam_id;
-    private String batch_id;
-    private String exam_name;
-    private String exam_type;
+    private String examId;
+    private String batchId;
+    private String examName;
     private String subject;
-    private int no_of_questions;
-    private String exam_date;
-    private String exam_start_time;
-    private String exam_end_time;
+    private int noOfQuestions;
+    private String examDate;
+    private String startTime;
+    private String endTime;
     private String author;
-    private String class_and_section;
-    private boolean exam_completed;
+    private String status;
 
 }

@@ -3,22 +3,28 @@ package org.alas.backend.documents;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.alas.backend.dto.QuestionMCQ;
+import org.alas.backend.dto.MCQSubmission;
+import org.alas.backend.dto.VisitDTO;
+import org.alas.backend.dto.VisitDetails;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
+import java.util.Map;
 
 @Document(collection = "Submissions")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@CompoundIndex(name = "exam_id_and_candidate_id", def = "{'exam_id':1,'candidate_id':1}")
+@CompoundIndex(name = "examIdAndCandidateId", def = "{'examId':1,'candidateId':1}")
 public class Submission {
 
-    private String exam_id;
+    private String examId;
+    private String candidateId;
+    private Map<String, MCQSubmission> questions;
 
-    private String candidate_id;
-
-    private List<QuestionMCQ> questionMCQList;
+    public Submission updateVisit(VisitDTO visit) {
+        questions.get(visit.getQuestionId())
+                .addVisit(new VisitDetails(visit.getVisitStartTime(), visit.getVisitEndTime(), visit.getSelectedAnswer()));
+        return this;
+    }
 }

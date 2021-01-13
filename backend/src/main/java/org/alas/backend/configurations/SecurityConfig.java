@@ -39,8 +39,12 @@ public class SecurityConfig {
                 .authenticationManager(reactiveAuthenticationManager)
                 .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
                 .authorizeExchange(it -> it
-                        .pathMatchers(HttpMethod.DELETE, PROTECTED_PATHS).hasRole("ADMIN")
-                        .pathMatchers(HttpMethod.PUT, PROTECTED_PATHS).hasRole("ADMIN")
+                        .pathMatchers(HttpMethod.DELETE, PROTECTED_PATHS).hasRole("ROLE_ADMIN")
+                        .pathMatchers(HttpMethod.PUT, PROTECTED_PATHS).hasRole("ROLE_ADMIN")
+//                        .pathMatchers(HttpMethod.POST, "/candidate/**").hasRole("ROLE_CANDIDATE")
+//                        .pathMatchers(HttpMethod.GET, "/candidate/**").hasRole("ROLE_CANDIDATE")
+//                        .pathMatchers(HttpMethod.POST, "/author/**").hasRole("ROLE_AUTHOR")
+//                        .pathMatchers(HttpMethod.GET, "/author/**").hasRole("ROLE_AUTHOR")
                         .pathMatchers(PROTECTED_PATHS).authenticated()
                         .anyExchange().permitAll()
                 )
@@ -50,16 +54,6 @@ public class SecurityConfig {
 
     }
 
-    private Mono<AuthorizationDecision> currentUserMatchesPath(Mono<Authentication> authentication,
-                                                               AuthorizationContext context) {
-
-        return authentication
-                .map(a -> context.getVariables().get("user").equals(a.getName()))
-                .map(AuthorizationDecision::new);
-
-    }
-
-//    TODO : Refactor the below function to use the UserRepository
     @Bean
     public ReactiveUserDetailsService userDetailsService(UserRepository users) {
 

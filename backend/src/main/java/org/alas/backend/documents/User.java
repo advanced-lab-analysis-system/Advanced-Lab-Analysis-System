@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.validation.constraints.Email;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Document(collection = "User")
 @AllArgsConstructor
@@ -20,20 +21,15 @@ public class User {
 
     @Id
     private String id;
-
-    private String fullname;
-
     private String username;
-
     @JsonIgnore
     private String password;
-
     @Email
     private String email;
-
+    private String fullName;
+    private Map<String, Object> userData;
     @Builder.Default()
     private boolean active = true;
-
     @Builder.Default()
     private List<String> roles = new ArrayList<>();
 
