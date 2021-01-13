@@ -1,6 +1,5 @@
 package org.alas.backend.controllers;
 
-import org.alas.backend.documents.Submission;
 import org.alas.backend.dto.VisitDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,7 +16,6 @@ import org.alas.backend.dto.ExamDataDTO;
 import org.alas.backend.handlers.ExamHandler;
 import org.alas.backend.handlers.SubmissionHandler;
 
-import java.time.Duration;
 
 @RestController
 public class ExamController {
@@ -28,10 +26,10 @@ public class ExamController {
     @Autowired
     private SubmissionHandler submissionHandler;
 
-    @PostMapping("/author/exam")
+    @PostMapping("/author/exams")
     public ResponseEntity<?> createExam(@RequestBody Exam exam) {
-        Mono<?> examDataMono = examHandler.createExam(exam);
-        return new ResponseEntity<>(examDataMono, HttpStatus.CREATED);
+        examHandler.createExam(exam);
+        return new ResponseEntity<>("Exam Created", HttpStatus.CREATED);
     }
 
     @GetMapping("/author/exams/{examId}")

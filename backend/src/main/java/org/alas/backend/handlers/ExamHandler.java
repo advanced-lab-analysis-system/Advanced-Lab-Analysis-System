@@ -1,7 +1,7 @@
 package org.alas.backend.handlers;
 
 
-import org.alas.backend.documents.Question;
+import org.alas.backend.documents.User;
 import org.alas.backend.documents.Submission;
 import org.alas.backend.dto.MCQSubmission;
 import org.alas.backend.dto.ExamDTO;
@@ -9,15 +9,14 @@ import org.alas.backend.documents.Exam;
 import org.alas.backend.dto.ExamDataDTO;
 import org.alas.backend.dto.QuestionDTO;
 import org.alas.backend.repositories.ExamRepository;
+import org.alas.backend.repositories.UserRepository;
 import org.alas.backend.repositories.SubmissionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -28,27 +27,36 @@ public class ExamHandler {
     private ExamRepository examRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private SubmissionRepository submissionRepository;
 
-    private void populateSubmissionCollection(Exam exam){
-        List<String> candidateIDs = Arrays.asList("j1","j2","j3","j4","j5");
-
-        submissionRepository.saveAll(candidateIDs.stream().map(candidateID->{
-            Submission submission = new Submission();
-            submission.setExamId(exam.getExamId());
-            submission.setCandidateId(candidateID);
-            Map<String, MCQSubmission> eachSubmissionMCQMap = new HashMap<>();
-            for(Question question : exam.getQuestions()){
-                eachSubmissionMCQMap.put(question.getQuestionId(), new MCQSubmission());
-            }
-            submission.setAllSubmissions(eachSubmissionMCQMap);
-            return submission;
-        }).collect(Collectors.toList())).subscribe();
+    public void createExam(Exam exam) {
+        populateSubmissionCollection(exam);
+        Map<String, Map<String, MCQSubmission>> submissions = new HashMap<>();
+        userRepository.findAllByRolesContaining("ROLE_CANDIDATE")
+                .subscribe(user -> submissions.put(user.getUsername(), new HashMap<>()),
+                        error -> System.err.println("Error: " + error), () -> {
+                            exam.setSubmissions(submissions);
+                            examRepository.save(exam).subscribe();
+                        });
     }
 
-    public Mono<Exam> createExam(Exam exam) {
-        populateSubmissionCollection(exam);
-        return examRepository.save(exam);
+    private void populateSubmissionCollection(Exam exam) {
+
+        Flux<User> candidates = userRepository.findAllByRolesContaining("ROLE_CANDIDATE");
+
+        submissionRepository.saveAll(candidates.map(candidate -> {
+            Submission submission = new Submission();
+            submission.setExamId(exam.getExamId());
+            submission.setCandidateId(candidate.getUsername());
+            Map<String, MCQSubmission> eachSubmissionMCQMap = new HashMap<>();
+            exam.getQuestions().forEach(question -> eachSubmissionMCQMap.put(question.getQuestionId(), new MCQSubmission()));
+            submission.setAllSubmissions(eachSubmissionMCQMap);
+            return submission;
+        })).subscribe();
+
     }
 
     public Flux<ExamDTO> getAllExams() {
@@ -83,11 +91,11 @@ public class ExamHandler {
                         exam.getAuthor(),
                         exam.getStatus(),
                         exam.getQuestions().stream().map(questionData ->
-                                new QuestionDTO(questionData.getQuestionId(), questionData.getOptions())).collect(Collectors.toList())));
+                                new QuestionDTO(questionData.getQuestionId(), questionData.getOptions(), questionData.getStatement())).collect(Collectors.toList())));
     }
 
     public void endExamByExamId(String examId) {
         submissionRepository.findAllByExamId(examId)
-                .map(submission -> examRepository.addSubmissionsByExamId(examId,submission).subscribe()).subscribe();
+                .map(submission -> examRepository.addSubmissionsByExamId(examId, submission).subscribe()).subscribe();
     }
 }
