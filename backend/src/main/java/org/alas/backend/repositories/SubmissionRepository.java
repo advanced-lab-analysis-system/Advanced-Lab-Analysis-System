@@ -20,6 +20,8 @@ public interface SubmissionRepository extends ReactiveMongoRepository<Submission
 
     Flux<Submission> findAllByExamId(String examId);
 
+    Mono<?> deleteAllByExamId(String examId);
+
 }
 
 interface CustomizedSubmissionRepository {

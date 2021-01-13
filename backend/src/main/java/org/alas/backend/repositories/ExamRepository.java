@@ -19,7 +19,7 @@ public interface ExamRepository extends ReactiveMongoRepository<Exam, String>, C
 }
 
 interface CustomizedExamRepository{
-    Mono<?> addSubmissionsByExamId(String examId,Submission submission);
+    Mono<?> addSubmissionByExamId(String examId, Submission submission);
 }
 
 class CustomizedExamRepositoryImpl implements CustomizedExamRepository{
@@ -28,7 +28,7 @@ class CustomizedExamRepositoryImpl implements CustomizedExamRepository{
     ReactiveMongoTemplate reactiveMongoTemplate;
 
     @Override
-    public Mono<?> addSubmissionsByExamId(String examId, Submission submission) {
+    public Mono<?> addSubmissionByExamId(String examId, Submission submission) {
         Query query = new Query();
         query.addCriteria(Criteria.where("examId").is(examId));
         Update update = new Update();

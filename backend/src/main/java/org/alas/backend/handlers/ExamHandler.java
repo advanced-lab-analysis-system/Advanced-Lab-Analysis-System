@@ -88,6 +88,7 @@ public class ExamHandler {
 
     public void endExamByExamId(String examId) {
         submissionRepository.findAllByExamId(examId)
-                .map(submission -> examRepository.addSubmissionsByExamId(examId,submission).subscribe()).subscribe();
+                .map(submission -> examRepository.addSubmissionByExamId(examId,submission).subscribe()).subscribe();
+        submissionRepository.deleteAllByExamId(examId).subscribe();
     }
 }
