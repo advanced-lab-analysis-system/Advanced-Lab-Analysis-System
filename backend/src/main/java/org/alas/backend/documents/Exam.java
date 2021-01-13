@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 import java.util.Map;
 
-@Document(collection = "Exam")
+@Document(collection = "Exams")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -33,3 +33,5 @@ public class Exam {
     //Here String(Key) is candidateId and Object is his submission for this exam
     private Map<String, Map<String, MCQSubmission>> submissions;
 }
+
+

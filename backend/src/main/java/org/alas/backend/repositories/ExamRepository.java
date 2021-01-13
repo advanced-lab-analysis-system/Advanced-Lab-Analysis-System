@@ -31,9 +31,7 @@ class CustomizedExamRepositoryImpl implements CustomizedExamRepository {
         Query query = new Query();
         query.addCriteria(Criteria.where("examId").is(examId));
         Update update = new Update();
-
         update.set("submissions." + submission.getCandidateId(), submission.getAllSubmissions());
-        System.out.println(submission);
-        return reactiveMongoTemplate.upsert(query, update, "Exam");
+        return reactiveMongoTemplate.upsert(query, update, "Exams");
     }
 }

@@ -36,8 +36,10 @@ public class ExamHandler {
         populateSubmissionCollection(exam);
         Map<String, Map<String, MCQSubmission>> submissions = new HashMap<>();
         userRepository.findAllByRolesContaining("ROLE_CANDIDATE")
-                .subscribe(user -> submissions.put(user.getUsername(), new HashMap<>()),
-                        error -> System.err.println("Error: " + error), () -> {
+                .subscribe(user -> submissions.put(user.getUsername(),
+                        new HashMap<>()),
+                        error -> System.err.println("Error: " + error),
+                        () -> {
                             exam.setSubmissions(submissions);
                             examRepository.save(exam).subscribe();
                         });
@@ -45,17 +47,17 @@ public class ExamHandler {
 
     private void populateSubmissionCollection(Exam exam) {
 
-        Flux<User> candidates = userRepository.findAllByRolesContaining("ROLE_CANDIDATE");
-
-        submissionRepository.saveAll(candidates.map(candidate -> {
-            Submission submission = new Submission();
-            submission.setExamId(exam.getExamId());
-            submission.setCandidateId(candidate.getUsername());
-            Map<String, MCQSubmission> eachSubmissionMCQMap = new HashMap<>();
-            exam.getQuestions().forEach(question -> eachSubmissionMCQMap.put(question.getQuestionId(), new MCQSubmission()));
-            submission.setAllSubmissions(eachSubmissionMCQMap);
-            return submission;
-        })).subscribe();
+        submissionRepository.saveAll(userRepository.findAllByRolesContaining("ROLE_CANDIDATE")
+                .map(candidate -> {
+                    Submission submission = new Submission();
+                    submission.setExamId(exam.getExamId());
+                    submission.setCandidateId(candidate.getUsername());
+                    Map<String, MCQSubmission> eachSubmissionMCQMap = new HashMap<>();
+                    exam.getQuestions().
+                            forEach(question -> eachSubmissionMCQMap.put(question.getQuestionId(), new MCQSubmission()));
+                    submission.setAllSubmissions(eachSubmissionMCQMap);
+                    return submission;
+                })).subscribe();
 
     }
 
@@ -97,5 +99,6 @@ public class ExamHandler {
     public void endExamByExamId(String examId) {
         submissionRepository.findAllByExamId(examId)
                 .map(submission -> examRepository.addSubmissionsByExamId(examId, submission).subscribe()).subscribe();
+        submissionRepository.deleteAllByExamId(examId).subscribe();
     }
 }

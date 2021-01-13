@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.alas.backend.dto.MCQSubmission;
-import org.alas.backend.dto.VisitDTO;
-import org.alas.backend.dto.VisitDetails;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -22,9 +20,4 @@ public class Submission {
     private String candidateId;
     private Map<String, MCQSubmission> allSubmissions;
 
-    public Submission updateVisit(VisitDTO visit) {
-        allSubmissions.get(visit.getQuestionId())
-                .addVisit(new VisitDetails(visit.getVisitStartTime(), visit.getVisitEndTime(), visit.getSelectedAnswer()));
-        return this;
-    }
 }

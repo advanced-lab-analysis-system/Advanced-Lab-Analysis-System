@@ -58,9 +58,7 @@ public class ExamController {
 
     @PostMapping("/candidate/submission")
     public ResponseEntity<?> newSubmission(@RequestParam String examId, @RequestParam String candidateId, @RequestBody VisitDTO visit) {
-        System.out.println(visit);
         Mono<?> addedSubmission = submissionHandler.addVisit(examId, candidateId, visit);
-        //addedSubmission.subscribe();
         return new ResponseEntity<>(addedSubmission, HttpStatus.CREATED);
     }
 }

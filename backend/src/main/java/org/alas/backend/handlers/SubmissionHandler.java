@@ -13,9 +13,6 @@ public class SubmissionHandler {
     private SubmissionRepository submissionRepository;
 
     public Mono<?> addVisit(String examId, String candidateId, VisitDTO visit) {
-//        return submissionRepository.findByExamIdAndCandidateId(examId, candidateId)
-//                .map(submission -> submission.updateVisit(visit))
-//                .flatMap(submissionRepository::save);
         return submissionRepository.updateByExamIdAndCandidateIdAndQuestionId(examId, candidateId, visit);
     }
 }

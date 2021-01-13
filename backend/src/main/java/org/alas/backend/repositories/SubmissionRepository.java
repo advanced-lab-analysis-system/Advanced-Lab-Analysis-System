@@ -18,6 +18,7 @@ public interface SubmissionRepository extends ReactiveMongoRepository<Submission
 
     Mono<Submission> findByExamIdAndCandidateId(String examId, String candidateId);
     Flux<Submission> findAllByExamId(String examId);
+    Mono<?> deleteAllByExamId(String examId);
 }
 
 interface CustomizedSubmissionRepository {
@@ -38,7 +39,6 @@ class CustomizedSubmissionRepositoryImpl implements CustomizedSubmissionReposito
         update.push("allSubmissions." + key + ".visits", new VisitDetails(visit.getVisitStartTime(), visit.getVisitEndTime(), visit.getSelectedAnswer()));
         update.set("allSubmissions." + key + ".finalAnswer", visit.getSelectedAnswer());
         update.inc("allSubmissions." + key + ".totalVisits");
-
         return reactiveMongoTemplate.upsert(query, update, Submission.class);
     }
 }
