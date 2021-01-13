@@ -13,7 +13,7 @@ import java.util.Map;
 * A Demo Service class to check Spark activation
 * */
 
-//@Service
+@Service
 public class WordCountService {
     @Autowired
     JavaSparkContext sc;

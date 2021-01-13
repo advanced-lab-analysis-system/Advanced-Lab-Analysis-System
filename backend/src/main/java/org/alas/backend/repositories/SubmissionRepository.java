@@ -17,9 +17,7 @@ import reactor.core.publisher.Mono;
 public interface SubmissionRepository extends ReactiveMongoRepository<Submission,String>, CustomizedSubmissionRepository {
 
     Mono<Submission> findByExamIdAndCandidateId(String examId, String candidateId);
-
     Flux<Submission> findAllByExamId(String examId);
-
 }
 
 interface CustomizedSubmissionRepository {
