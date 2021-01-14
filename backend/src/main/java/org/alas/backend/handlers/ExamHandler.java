@@ -1,13 +1,10 @@
 package org.alas.backend.handlers;
 
 
-import org.alas.backend.documents.User;
+import org.alas.backend.evaluators.MCQEvaluator;
 import org.alas.backend.documents.Submission;
-import org.alas.backend.dto.MCQSubmission;
-import org.alas.backend.dto.ExamDTO;
+import org.alas.backend.dto.*;
 import org.alas.backend.documents.Exam;
-import org.alas.backend.dto.ExamDataDTO;
-import org.alas.backend.dto.QuestionDTO;
 import org.alas.backend.repositories.ExamRepository;
 import org.alas.backend.repositories.UserRepository;
 import org.alas.backend.repositories.SubmissionRepository;
@@ -16,6 +13,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,8 +34,7 @@ public class ExamHandler {
         populateSubmissionCollection(exam);
         Map<String, Map<String, MCQSubmission>> submissions = new HashMap<>();
         userRepository.findAllByRolesContaining("ROLE_CANDIDATE")
-                .subscribe(user -> submissions.put(user.getUsername(),
-                        new HashMap<>()),
+                .subscribe(user -> submissions.put(user.getUsername(),new HashMap<>()),
                         error -> System.err.println("Error: " + error),
                         () -> {
                             exam.setSubmissions(submissions);
@@ -54,7 +51,8 @@ public class ExamHandler {
                     submission.setCandidateId(candidate.getUsername());
                     Map<String, MCQSubmission> eachSubmissionMCQMap = new HashMap<>();
                     exam.getQuestions().
-                            forEach(question -> eachSubmissionMCQMap.put(question.getQuestionId(), new MCQSubmission()));
+                            forEach(question -> eachSubmissionMCQMap.put(question.getQuestionId(), new MCQSubmission("", 0, new ArrayList<VisitDetails>() {
+                            })));
                     submission.setAllSubmissions(eachSubmissionMCQMap);
                     return submission;
                 })).subscribe();
@@ -97,8 +95,13 @@ public class ExamHandler {
     }
 
     public void endExamByExamId(String examId) {
+        MCQEvaluator mcqEvaluator = new MCQEvaluator();
+        examRepository.findByExamId(examId).subscribe(exam -> mcqEvaluator.setQuestionList(exam.getQuestions()));
         submissionRepository.findAllByExamId(examId)
-                .map(submission -> examRepository.addSubmissionsByExamId(examId, submission).subscribe()).subscribe();
-        submissionRepository.deleteAllByExamId(examId).subscribe();
+                .subscribe(submission ->
+                                examRepository.addSubmissionsByExamId(mcqEvaluator.evaluate(submission.getAllSubmissions()), examId, submission),
+                        error -> System.err.println("Error: " + error),
+                        () -> submissionRepository.deleteAllByExamId(examId).subscribe()
+                );
     }
 }

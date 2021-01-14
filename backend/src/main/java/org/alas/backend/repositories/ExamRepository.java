@@ -11,6 +11,8 @@ import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Repository
 public interface ExamRepository extends ReactiveMongoRepository<Exam, String>, CustomizedExamRepository {
 
@@ -18,7 +20,7 @@ public interface ExamRepository extends ReactiveMongoRepository<Exam, String>, C
 }
 
 interface CustomizedExamRepository {
-    Mono<?> addSubmissionsByExamId(String examId, Submission submission);
+    void addSubmissionsByExamId(List<String> questionList, String examId, Submission submission);
 }
 
 class CustomizedExamRepositoryImpl implements CustomizedExamRepository {
@@ -27,11 +29,18 @@ class CustomizedExamRepositoryImpl implements CustomizedExamRepository {
     ReactiveMongoTemplate reactiveMongoTemplate;
 
     @Override
-    public Mono<?> addSubmissionsByExamId(String examId, Submission submission) {
+    public void addSubmissionsByExamId(List<String> questionsAnsweredCorrectly, String examId, Submission submission) {
         Query query = new Query();
         query.addCriteria(Criteria.where("examId").is(examId));
         Update update = new Update();
         update.set("submissions." + submission.getCandidateId(), submission.getAllSubmissions());
-        return reactiveMongoTemplate.upsert(query, update, "Exams");
+        reactiveMongoTemplate.upsert(query, update,"Exams")
+                .subscribe(null,null, () -> {
+                    Update update1 = new Update();
+                    update1.set("submissions." + submission.getCandidateId() + ".questionsAnsweredCorrectly", questionsAnsweredCorrectly);
+                    update1.set("submissions." + submission.getCandidateId() + ".totalScore", questionsAnsweredCorrectly.size());
+                    reactiveMongoTemplate.upsert(query, update1, "Exams").subscribe();
+                });
     }
 }
+
