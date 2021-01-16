@@ -7,7 +7,9 @@ import org.alas.backend.dto.MCQSubmission;
 import org.alas.backend.dto.Question;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -23,9 +25,10 @@ public class Exam {
     private String examName;
     private String subject;
     private int noOfQuestions;
-    private String examDate;
-    private String examStartTime;
-    private String examEndTime;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime examStartTime;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime examEndTime;
     private String author;
     private String status;
     private List<Question> questions;

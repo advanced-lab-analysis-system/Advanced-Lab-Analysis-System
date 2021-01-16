@@ -4,6 +4,9 @@ package org.alas.backend.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -15,9 +18,10 @@ public class ExamDTO {
     private String examName;
     private String subject;
     private int noOfQuestions;
-    private String examDate;
-    private String startTime;
-    private String endTime;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime examStartTime;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime examEndTime;
     private String author;
     private String status;
 
