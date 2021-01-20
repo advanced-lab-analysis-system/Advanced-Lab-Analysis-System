@@ -1,6 +1,5 @@
 package org.alas.backend.repositories;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.alas.backend.documents.Submission;
 import org.alas.backend.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface SubmissionRepository extends ReactiveMongoRepository<Submission,String>, CustomizedSubmissionRepository {
 
-    Mono<Submission> findByExamIdAndCandidateId(String examId, String candidateId);
     Flux<Submission> findAllByExamId(String examId);
     Mono<?> deleteAllByExamId(String examId);
 }

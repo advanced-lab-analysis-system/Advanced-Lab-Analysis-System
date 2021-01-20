@@ -6,7 +6,7 @@ import org.alas.backend.documents.Submission;
 import org.alas.backend.dto.*;
 import org.alas.backend.documents.Exam;
 import org.alas.backend.evaluators.MCQEvaluator;
-import org.alas.backend.evaluators.MCQQuestion;
+import org.alas.backend.dto.MCQQuestion;
 import org.alas.backend.repositories.ExamRepository;
 import org.alas.backend.repositories.UserRepository;
 import org.alas.backend.repositories.SubmissionRepository;

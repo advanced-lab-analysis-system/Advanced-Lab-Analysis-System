@@ -7,11 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CodeDTO {
+public class MCQQuestion {
 
     private String questionId;
-    private Integer language_id;
-    private String code;
-    private String customInput;
-    private Boolean submit;
+    private String answer;
 }

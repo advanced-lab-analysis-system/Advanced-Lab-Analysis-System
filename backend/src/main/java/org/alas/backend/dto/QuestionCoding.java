@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 public class QuestionCoding {
 
-    private List<String> languagesAccepted;
+    private List<LanguageAccepted> languagesAccepted;
     private Long timeLimit;
     private Long memoryLimit;
     private String statement;

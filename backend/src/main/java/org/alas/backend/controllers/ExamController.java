@@ -73,14 +73,17 @@ public class ExamController {
                 return new ResponseEntity<>(responseMono,HttpStatus.CREATED);
             case "coding":
                 CodeDTO codeDTO = objectMapper.readValue(visit,CodeDTO.class);
-                JudgeRequestDTO judgeRequestDTO = new JudgeRequestDTO(70,codeDTO.getCode(),codeDTO.getCustomInput());
+                JudgeRequestDTO judgeRequestDTO = new JudgeRequestDTO(codeDTO.getLanguage_id(),codeDTO.getCode(),codeDTO.getCustomInput());
                 Mono<GetSubmissionResponse> responseMono1 = judgeHandler.createSubmission(judgeRequestDTO)
                         .delayElement(Duration.ofMillis(5000))
                         .flatMap(creationResponse -> judgeHandler.getSubmission(creationResponse.getToken()));
+
                 if(codeDTO.getSubmit())
-                    responseMono1.map(getSubmissionResponse ->
-                            submissionHandler.addCodeSubmission(examId,candidateId, codeDTO.getQuestionId(), getSubmissionResponse).subscribe()).subscribe();
+                    responseMono1.subscribe(getSubmissionResponse ->
+                            submissionHandler.addCodeSubmission(examId,candidateId, codeDTO.getQuestionId(), getSubmissionResponse)
+                                    .subscribe());
                 return new ResponseEntity<>(responseMono1,HttpStatus.CREATED);
+
             default:
                 throw new IllegalStateException("Unexpected value: " + questionType);
         }
