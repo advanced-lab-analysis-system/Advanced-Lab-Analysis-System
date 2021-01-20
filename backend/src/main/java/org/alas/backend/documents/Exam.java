@@ -34,7 +34,7 @@ public class Exam {
     private List<Question> questionList;
 
     //Here String(Key) is candidateId and Object is his submission for this exam
-    private Map<String, Map<String, MCQSubmission>> submissions;
+    private Map<String, Map<String, Object>> submissions;
 }
 
 

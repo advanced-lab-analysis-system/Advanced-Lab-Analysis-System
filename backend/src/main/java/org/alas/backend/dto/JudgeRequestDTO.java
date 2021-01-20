@@ -3,6 +3,7 @@ package org.alas.backend.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.json.JSONObject;
 
 @Data
 @AllArgsConstructor
@@ -14,10 +15,11 @@ public class JudgeRequestDTO {
 
     @Override
     public String toString() {
-        return "{" +
-                "language_id=" + language_id +
-                ",source_code=\"" + source_code + "\"" +
-                ", stdin=\"" + stdin + "\"" +
-                '}';
+//        return "{" +
+//                "language_id=" + language_id +
+//                ",source_code=\"" + source_code + "\"" +
+//                ", stdin=\"" + stdin + "\"" +
+//                '}';
+        return new JSONObject(this).toString();
     }
 }

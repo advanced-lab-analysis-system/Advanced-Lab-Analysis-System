@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetSubmissionResponse {
+
     private String source_code;
     private Integer language_id;
     private String stdin;

@@ -16,6 +16,8 @@ import org.alas.backend.handlers.ExamHandler;
 import org.alas.backend.handlers.SubmissionHandler;
 
 import java.io.IOException;
+import java.time.Duration;
+
 
 
 @RestController
@@ -56,7 +58,7 @@ public class ExamController {
 
     @GetMapping("/candidate/exams/{examId}")
     public ResponseEntity<?> getExamWithoutAnswersById(@PathVariable String examId) {
-        Mono<ExamDataDTO> examDataDTOMono = examHandler.getExamWithoutAnswersById(examId);
+        Mono<?> examDataDTOMono = examHandler.getExamWithoutAnswersById(examId);
         return new ResponseEntity<>(examDataDTOMono, HttpStatus.OK);
     }
 

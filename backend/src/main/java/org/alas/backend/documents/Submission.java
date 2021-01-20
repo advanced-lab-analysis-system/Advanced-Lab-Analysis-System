@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.alas.backend.dto.MCQSubmission;
+import org.json.JSONObject;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -20,4 +21,8 @@ public class Submission {
     private String candidateId;
     private Map<String, Object> allSubmissions;
 
+    @Override
+    public String toString() {
+        return new JSONObject(this).toString();
+    }
 }

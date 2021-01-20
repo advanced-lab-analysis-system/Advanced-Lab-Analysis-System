@@ -35,7 +35,7 @@ public class ExamHandler {
 
     public void createExam(Exam exam) {
         populateSubmissionCollection(exam);
-        Map<String, Map<String, MCQSubmission>> submissions = new HashMap<>();
+        Map<String, Map<String, Object>> submissions = new HashMap<>();
         userRepository.findAllByRolesContaining("ROLE_CANDIDATE")
                 .subscribe(user -> submissions.put(user.getUsername(),new HashMap<>()),
                         error -> System.err.println("Error: " + error),
@@ -55,7 +55,7 @@ public class ExamHandler {
                     Map<String, Object> eachSubmissionMap = new HashMap<>();
                     exam.getQuestionList().forEach(question -> {
                         if(question.getQuestionType().equals("mcq"))
-                            eachSubmissionMap.put(question.getQuestionId(), new MCQSubmission("", 0, new ArrayList<VisitDetails>()));
+                            eachSubmissionMap.put(question.getQuestionId(), new MCQSubmission("", 0, new ArrayList<>()));
                         else
                             eachSubmissionMap.put(question.getQuestionId(),
                                     new CodeSubmission(0,-1,0.0
@@ -85,7 +85,7 @@ public class ExamHandler {
         return examRepository.findByExamId(exam_id);
     }
 
-    public Mono<ExamDataDTO> getExamWithoutAnswersById(String exam_id){
+    public Mono<?> getExamWithoutAnswersById(String exam_id){
         ObjectMapper objectMapper = new ObjectMapper();
         return examRepository.findByExamId(exam_id).map(exam ->
                 new ExamDataDTO(exam.getExamId(),
@@ -120,26 +120,29 @@ public class ExamHandler {
     public void endExamByExamId(String examId) {
         MCQEvaluator mcqEvaluator = new MCQEvaluator();
         ObjectMapper objectMapper = new ObjectMapper();
-        //examRepository.findByExamId(examId).subscribe(exam -> mcqEvaluator.setQuestionList(exam.getQuestionList()));
         examRepository.findByExamId(examId)
-                .subscribe(exam -> mcqEvaluator.setQuestionList(exam.getQuestionList()
-                        .stream().filter(question -> question.getQuestionType().equals("mcq"))
-                        .map(question ->{
-                            QuestionMCQ questionMCQ = new QuestionMCQ();
-                            try {
-                                String questionString = objectMapper.writeValueAsString(question.getQuestion());
-                                questionMCQ = objectMapper.readValue(questionString,QuestionMCQ.class);
-                            } catch (JsonProcessingException e) {
-                                e.printStackTrace();
-                            }
-                            return new MCQQuestion(question.getQuestionId(), questionMCQ.getAnswer());
-                        }).collect(Collectors.toList())));
-
-        submissionRepository.findAllByExamId(examId)
-                .subscribe(submission ->
-                                examRepository.addSubmissionsByExamId(mcqEvaluator.evaluate(submission.getAllSubmissions()), examId, submission),
-                        error -> System.err.println("Error: " + error),
-                        () -> submissionRepository.deleteAllByExamId(examId).subscribe()
+                .subscribe(exam -> mcqEvaluator.setQuestionList(exam.getQuestionList().stream()
+                                .filter(question -> question.getQuestionType().equals("mcq"))
+                                .map(question ->{
+                                    QuestionMCQ questionMCQ = new QuestionMCQ();
+                                    try {
+                                        String questionString = objectMapper.writeValueAsString(question.getQuestion());
+                                        //System.out.println("In endExamByExamId1"+questionString);
+                                        questionMCQ = objectMapper.readValue(questionString,QuestionMCQ.class);
+                                    } catch (JsonProcessingException e) {
+                                        e.printStackTrace();
+                                    }
+                                    return new MCQQuestion(question.getQuestionId(), questionMCQ.getAnswer());
+                                })
+                                .collect(Collectors.toList()))
+                        ,null
+                        ,()->
+                                submissionRepository.findAllByExamId(examId)
+                                        .subscribe(submission ->
+                                                        examRepository.addSubmissionsByExamId(mcqEvaluator.evaluate(submission.getAllSubmissions()), examId, submission),
+                                                error -> System.err.println("Error: " + error),
+                                                () -> submissionRepository.deleteAllByExamId(examId).subscribe()
+                                        )
                 );
     }
 }

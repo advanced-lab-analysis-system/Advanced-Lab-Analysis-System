@@ -1,10 +1,9 @@
 package org.alas.backend.evaluators;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.alas.backend.dto.MCQSubmission;
-import org.alas.backend.dto.Question;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,8 +22,10 @@ public class MCQEvaluator {
         questionList.forEach(question -> {
             MCQSubmission mcqSubmission = new MCQSubmission();
             try {
+                System.out.println("In evaluate method ");
                 String submissionString = objectMapper.writeValueAsString(allSubmissions.get(question.getQuestionId()));
                 mcqSubmission = objectMapper.readValue(submissionString,MCQSubmission.class);
+                System.out.println(mcqSubmission.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
