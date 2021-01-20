@@ -18,6 +18,6 @@ public class Submission {
 
     private String examId;
     private String candidateId;
-    private Map<String, MCQSubmission> allSubmissions;
+    private Map<String, Object> allSubmissions;
 
 }

@@ -24,5 +24,5 @@ public class ExamDataDTO {
     private LocalDateTime examEndTime;
     private String author;
     private String status;
-    private List<QuestionDTO> questions;
+    private List<Question> questions;
 }

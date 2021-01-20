@@ -9,9 +9,8 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Question {
+public class QuestionMCQDTO {
 
-    private String questionId;
-    private String questionType;
-    private Object question;
+    private String statement;
+    private List<String> options;
 }

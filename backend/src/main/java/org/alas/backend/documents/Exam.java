@@ -31,7 +31,7 @@ public class Exam {
     private LocalDateTime examEndTime;
     private String author;
     private String status;
-    private List<Question> questions;
+    private List<Question> questionList;
 
     //Here String(Key) is candidateId and Object is his submission for this exam
     private Map<String, Map<String, MCQSubmission>> submissions;

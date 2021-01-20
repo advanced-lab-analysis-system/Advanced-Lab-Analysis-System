@@ -4,14 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Question {
+public class CodeDTO {
 
     private String questionId;
-    private String questionType;
-    private Object question;
+    private String language;
+    private String code;
+    private String customInput;
+    private Boolean submit;
 }

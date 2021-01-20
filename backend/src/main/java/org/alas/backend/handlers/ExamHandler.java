@@ -1,10 +1,12 @@
 package org.alas.backend.handlers;
 
-
-import org.alas.backend.evaluators.MCQEvaluator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.alas.backend.documents.Submission;
 import org.alas.backend.dto.*;
 import org.alas.backend.documents.Exam;
+import org.alas.backend.evaluators.MCQEvaluator;
+import org.alas.backend.evaluators.MCQQuestion;
 import org.alas.backend.repositories.ExamRepository;
 import org.alas.backend.repositories.UserRepository;
 import org.alas.backend.repositories.SubmissionRepository;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,11 +52,16 @@ public class ExamHandler {
                     Submission submission = new Submission();
                     submission.setExamId(exam.getExamId());
                     submission.setCandidateId(candidate.getUsername());
-                    Map<String, MCQSubmission> eachSubmissionMCQMap = new HashMap<>();
-                    exam.getQuestions().
-                            forEach(question -> eachSubmissionMCQMap.put(question.getQuestionId(), new MCQSubmission("", 0, new ArrayList<VisitDetails>() {
-                            })));
-                    submission.setAllSubmissions(eachSubmissionMCQMap);
+                    Map<String, Object> eachSubmissionMap = new HashMap<>();
+                    exam.getQuestionList().forEach(question -> {
+                        if(question.getQuestionType().equals("mcq"))
+                            eachSubmissionMap.put(question.getQuestionId(), new MCQSubmission("", 0, new ArrayList<VisitDetails>()));
+                        else
+                            eachSubmissionMap.put(question.getQuestionId(),
+                                    new CodeSubmission(0,-1,0.0
+                                            ,new ArrayList<>()));
+                    });
+                    submission.setAllSubmissions(eachSubmissionMap);
                     return submission;
                 })).subscribe();
 
@@ -77,7 +85,8 @@ public class ExamHandler {
         return examRepository.findByExamId(exam_id);
     }
 
-    public Mono<ExamDataDTO> getExamWithoutAnswersById(String exam_id) {
+    public Mono<ExamDataDTO> getExamWithoutAnswersById(String exam_id){
+        ObjectMapper objectMapper = new ObjectMapper();
         return examRepository.findByExamId(exam_id).map(exam ->
                 new ExamDataDTO(exam.getExamId(),
                         exam.getBatchId(),
@@ -88,13 +97,44 @@ public class ExamHandler {
                         exam.getExamEndTime(),
                         exam.getAuthor(),
                         exam.getStatus(),
-                        exam.getQuestions().stream().map(questionData ->
-                                new QuestionDTO(questionData.getQuestionId(), questionData.getOptions(), questionData.getStatement())).collect(Collectors.toList())));
+                        exam.getQuestionList().stream().map(question -> {
+                            Question questionFiltered = new Question();
+                            if (question.getQuestionType().equals("mcq")){
+                                questionFiltered.setQuestionId(question.getQuestionId());
+                                questionFiltered.setQuestionType(question.getQuestionType());
+                                try {
+                                    String questionString = objectMapper.writeValueAsString(question.getQuestion());
+                                    QuestionMCQ questionMCQ = objectMapper.readValue(questionString,QuestionMCQ.class);
+                                    questionFiltered.setQuestion(new QuestionMCQDTO(questionMCQ.getStatement(),questionMCQ.getOptions()));
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            else {
+                                questionFiltered = question;
+                            }
+                            return questionFiltered;
+                        }).collect(Collectors.toList())));
     }
 
     public void endExamByExamId(String examId) {
         MCQEvaluator mcqEvaluator = new MCQEvaluator();
-        examRepository.findByExamId(examId).subscribe(exam -> mcqEvaluator.setQuestionList(exam.getQuestions()));
+        ObjectMapper objectMapper = new ObjectMapper();
+        //examRepository.findByExamId(examId).subscribe(exam -> mcqEvaluator.setQuestionList(exam.getQuestionList()));
+        examRepository.findByExamId(examId)
+                .subscribe(exam -> mcqEvaluator.setQuestionList(exam.getQuestionList()
+                        .stream().filter(question -> question.getQuestionType().equals("mcq"))
+                        .map(question ->{
+                            QuestionMCQ questionMCQ = new QuestionMCQ();
+                            try {
+                                String questionString = objectMapper.writeValueAsString(question.getQuestion());
+                                questionMCQ = objectMapper.readValue(questionString,QuestionMCQ.class);
+                            } catch (JsonProcessingException e) {
+                                e.printStackTrace();
+                            }
+                            return new MCQQuestion(question.getQuestionId(), questionMCQ.getAnswer());
+                        }).collect(Collectors.toList())));
+
         submissionRepository.findAllByExamId(examId)
                 .subscribe(submission ->
                                 examRepository.addSubmissionsByExamId(mcqEvaluator.evaluate(submission.getAllSubmissions()), examId, submission),

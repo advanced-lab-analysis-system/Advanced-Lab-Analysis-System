@@ -1,0 +1,19 @@
+package org.alas.backend.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class QuestionCoding {
+
+    private List<String> languagesAccepted;
+    private Long timeLimit;
+    private Long memoryLimit;
+    private String statement;
+    private List<TestCase> testCases;
+}
