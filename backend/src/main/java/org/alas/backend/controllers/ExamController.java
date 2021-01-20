@@ -75,6 +75,7 @@ public class ExamController {
                 CodeDTO codeDTO = objectMapper.readValue(visit,CodeDTO.class);
                 JudgeRequestDTO judgeRequestDTO = new JudgeRequestDTO(70,codeDTO.getCode(),codeDTO.getCustomInput());
                 Mono<GetSubmissionResponse> responseMono1 = judgeHandler.createSubmission(judgeRequestDTO)
+                        .delayElement(Duration.ofMillis(5000))
                         .flatMap(creationResponse -> judgeHandler.getSubmission(creationResponse.getToken()));
                 if(codeDTO.getSubmit())
                     responseMono1.map(getSubmissionResponse ->
