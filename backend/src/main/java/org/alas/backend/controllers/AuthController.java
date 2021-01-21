@@ -3,6 +3,7 @@ package org.alas.backend.controllers;
 import lombok.RequiredArgsConstructor;
 import lombok.var;
 import org.alas.backend.dto.AuthenticationRequest;
+import org.alas.backend.repositories.UserRepository;
 import org.alas.backend.security.jwt.JwtProvider;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,19 +27,27 @@ public class AuthController {
 
     private final ReactiveAuthenticationManager authenticationManager;
 
+    private final UserRepository userRepository;
+
     @PostMapping("/login")
     public Mono<ResponseEntity> login(@Valid @RequestBody Mono<AuthenticationRequest> authRequest) {
 
         return authRequest
                 .flatMap(login -> this.authenticationManager
                         .authenticate(new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword()))
-                        .map(this.tokenProvider::createToken)
+                        .map(this.tokenProvider::createToken).map(token -> {
+                            String[] tokenAndRole = new String[2];
+                            tokenAndRole[0] = token;
+                            tokenAndRole[1] = userRepository.findByUsername(login.getUsername()).block().getRoles().get(0);
+                            return tokenAndRole;
+                        })
                 )
-                .map(jwt -> {
+                .map(tokenAndRole -> {
                     HttpHeaders httpHeaders = new HttpHeaders();
-                    httpHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + jwt);
+                    httpHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + tokenAndRole[0]);
                     Map<String, String> tokenBody = new HashMap<>();
-                    tokenBody.put("access_token", jwt);
+                    tokenBody.put("access_token", tokenAndRole[0]);
+                    tokenBody.put("role", tokenAndRole[1]);
                     return new ResponseEntity<>(tokenBody, httpHeaders, HttpStatus.OK);
                 });
 

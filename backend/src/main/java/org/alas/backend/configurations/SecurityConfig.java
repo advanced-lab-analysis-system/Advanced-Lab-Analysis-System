@@ -20,7 +20,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authorization.AuthorizationContext;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Mono;
+
+import java.util.Arrays;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 public class SecurityConfig {
@@ -34,7 +41,7 @@ public class SecurityConfig {
                 "/author/**"
         };
 
-        return http.csrf(ServerHttpSecurity.CsrfSpec::disable)
+        return http.cors().and().csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .authenticationManager(reactiveAuthenticationManager)
                 .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
@@ -45,7 +52,7 @@ public class SecurityConfig {
 //                        .pathMatchers(HttpMethod.GET, "/candidate/**").hasRole("ROLE_CANDIDATE")
 //                        .pathMatchers(HttpMethod.POST, "/author/**").hasRole("ROLE_AUTHOR")
 //                        .pathMatchers(HttpMethod.GET, "/author/**").hasRole("ROLE_AUTHOR")
-//                        .pathMatchers(PROTECTED_PATHS).authenticated()
+                        .pathMatchers(PROTECTED_PATHS).authenticated()
                         .anyExchange().permitAll()
                 )
                 .addFilterAt(new JwtAuthenticationFilter(tokenProvider), SecurityWebFiltersOrder.HTTP_BASIC)
@@ -75,6 +82,16 @@ public class SecurityConfig {
         var authenticationManager = new UserDetailsRepositoryReactiveAuthenticationManager(userDetailsService);
         authenticationManager.setPasswordEncoder(passwordEncoder);
         return authenticationManager;
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.applyPermitDefaultValues();
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
     }
 
     @Bean
