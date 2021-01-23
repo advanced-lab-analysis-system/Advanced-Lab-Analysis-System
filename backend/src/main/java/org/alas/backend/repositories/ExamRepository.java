@@ -21,6 +21,7 @@ public interface ExamRepository extends ReactiveMongoRepository<Exam, String>, C
 
 interface CustomizedExamRepository {
     void addSubmissionsByExamId(List<String> questionList, String examId, Submission submission);
+    void updateExamStatus(String examId);
 }
 
 class CustomizedExamRepositoryImpl implements CustomizedExamRepository {
@@ -42,5 +43,13 @@ class CustomizedExamRepositoryImpl implements CustomizedExamRepository {
                     reactiveMongoTemplate.upsert(query, update1, "Exams").subscribe();
                 });
     }
-}
 
+    @Override
+    public void updateExamStatus(String examId) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("examId").is(examId));
+        Update update = new Update();
+        update.set("status","ended");
+        reactiveMongoTemplate.upsert(query,update,"Exams").subscribe();
+    }
+}

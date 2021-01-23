@@ -137,12 +137,16 @@ public class ExamHandler {
                                 .collect(Collectors.toList()))
                         ,null
                         ,()->
-                                submissionRepository.findAllByExamId(examId)
-                                        .subscribe(submission ->
-                                                        examRepository.addSubmissionsByExamId(mcqEvaluator.evaluate(submission.getAllSubmissions()), examId, submission),
-                                                error -> System.err.println("Error: " + error),
-                                                () -> submissionRepository.deleteAllByExamId(examId).subscribe()
-                                        )
+                        {
+                            submissionRepository.findAllByExamId(examId)
+                                    .subscribe(submission ->
+                                                    examRepository.addSubmissionsByExamId(mcqEvaluator.evaluate(submission.getAllSubmissions()), examId, submission),
+                                            error -> System.err.println("Error: " + error),
+                                            () -> submissionRepository.deleteAllByExamId(examId).subscribe()
+                                    );
+                            examRepository.updateExamStatus(examId);
+                        }
+
                 );
     }
 }
