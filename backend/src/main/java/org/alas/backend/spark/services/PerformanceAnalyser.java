@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Service
+//@Service
 public class PerformanceAnalyser {
 
     @Autowired
@@ -23,21 +23,20 @@ public class PerformanceAnalyser {
     @Autowired
     private ExamRepository examRepository;
 
-    public void getAnalytics(String examId) {
-        List<Tuple2<String, Map<String, MCQSubmission>>> submissionMap = new ArrayList<>();
-        examRepository.findByExamId(examId)
-                .subscribe(exam -> exam.getSubmissions()
-                        .forEach((candidateId, submission) -> {
-                            Tuple2<String, Map<String, MCQSubmission>> candidateSubmission;
-                            candidateSubmission = new Tuple2<>(candidateId, submission);
-                            submissionMap.add(candidateSubmission);
-                        }));
-        JavaPairRDD<String, Map<String, MCQSubmission>> submissionRDD = sc.parallelizePairs(submissionMap);
-        List<Question> questionList = new ArrayList<>();
-        examRepository.findByExamId(examId).subscribe(exam -> questionList.addAll(exam.getQuestions()));
-
-        JavaRDD<Question> questionJavaRDD = sc.parallelize(questionList);
-
-
-    }
+//    public void getAnalytics(String examId) {
+//        List<Tuple2<String, Map<String, MCQSubmission>>> submissionMap = new ArrayList<>();
+//        examRepository.findByExamId(examId)
+//                .subscribe(exam -> exam.getSubmissions()
+//                        .forEach((candidateId, submission) -> {
+//                            Tuple2<String, Map<String, MCQSubmission>> candidateSubmission;
+//                            candidateSubmission = new Tuple2<>(candidateId, submission);
+//                            submissionMap.add(candidateSubmission);
+//                        }));
+//        JavaPairRDD<String, Map<String, MCQSubmission>> submissionRDD = sc.parallelizePairs(submissionMap);
+//        List<Question> questionList = new ArrayList<>();
+//        examRepository.findByExamId(examId).subscribe(exam -> questionList.addAll(exam.getQuestions()));
+//
+//        JavaRDD<Question> questionJavaRDD = sc.parallelize(questionList);
+//
+//    }
 }

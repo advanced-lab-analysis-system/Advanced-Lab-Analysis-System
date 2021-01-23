@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.time.Duration;
 
 
-
 @RestController
 public class ExamController {
 
@@ -33,7 +32,7 @@ public class ExamController {
     private JudgeHandler judgeHandler;
 
     @PostMapping("/author/exams")
-    public ResponseEntity<?> createExam(@RequestBody Exam exam){
+    public ResponseEntity<?> createExam(@RequestBody Exam exam) {
         examHandler.createExam(exam);
         return new ResponseEntity<>("Exam Created", HttpStatus.CREATED);
     }
@@ -66,23 +65,23 @@ public class ExamController {
     public ResponseEntity<?> newSubmission(@RequestParam String examId, @RequestParam String candidateId,
                                            @RequestParam String questionType, @RequestBody String visit) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        switch (questionType){
+        switch (questionType) {
             case "mcq":
-                VisitDTO  visitDTO = objectMapper.readValue(visit,VisitDTO.class);
+                VisitDTO visitDTO = objectMapper.readValue(visit, VisitDTO.class);
                 Mono<?> responseMono = submissionHandler.addVisit(examId, candidateId, visitDTO);
-                return new ResponseEntity<>(responseMono,HttpStatus.CREATED);
+                return new ResponseEntity<>(responseMono, HttpStatus.CREATED);
             case "coding":
-                CodeDTO codeDTO = objectMapper.readValue(visit,CodeDTO.class);
-                JudgeRequestDTO judgeRequestDTO = new JudgeRequestDTO(codeDTO.getLanguage_id(),codeDTO.getCode(),codeDTO.getCustomInput());
+                CodeDTO codeDTO = objectMapper.readValue(visit, CodeDTO.class);
+                JudgeRequestDTO judgeRequestDTO = new JudgeRequestDTO(codeDTO.getLanguage_id(), codeDTO.getCode(), codeDTO.getCustomInput());
                 Mono<GetSubmissionResponse> responseMono1 = judgeHandler.createSubmission(judgeRequestDTO)
                         .delayElement(Duration.ofMillis(5000))
                         .flatMap(creationResponse -> judgeHandler.getSubmission(creationResponse.getToken()));
 
-                if(codeDTO.getSubmit())
+                if (codeDTO.getSubmit())
                     responseMono1.subscribe(getSubmissionResponse ->
-                            submissionHandler.addCodeSubmission(examId,candidateId, codeDTO.getQuestionId(), getSubmissionResponse)
+                            submissionHandler.addCodeSubmission(examId, candidateId, codeDTO.getQuestionId(), getSubmissionResponse)
                                     .subscribe());
-                return new ResponseEntity<>(responseMono1,HttpStatus.CREATED);
+                return new ResponseEntity<>(responseMono1, HttpStatus.CREATED);
 
             default:
                 throw new IllegalStateException("Unexpected value: " + questionType);

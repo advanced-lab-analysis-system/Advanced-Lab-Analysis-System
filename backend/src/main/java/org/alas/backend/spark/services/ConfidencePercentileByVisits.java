@@ -29,14 +29,14 @@ public class ConfidencePercentileByVisits {
     @Autowired
     private PerformanceAnalysisRepository performanceAnalysisRepository;
 
-    public void getConfidenceByVisits(JavaRDD<Question> questionJavaRDD,
-                                      JavaPairRDD<String, Map<String, MCQSubmission>> submissionRDD) {
-
-        JavaRDD<Object> temp = questionJavaRDD.map(question -> submissionRDD
-                .filter(submissionTuple -> submissionTuple._2
-                        .get(question.getQuestionId()).getFinalAnswer()
-                        .equals(question.getAnswer()))
-                .map(Tuple2::swap)
-                .sortBy(submission -> submission._1.get(question.getQuestionId()).getTotalVisits(), false, 1));
-    }
+//    public void getConfidenceByVisits(JavaRDD<Question> questionJavaRDD,
+//                                      JavaPairRDD<String, Map<String, MCQSubmission>> submissionRDD) {
+//
+//        JavaRDD<Object> temp = questionJavaRDD.map(question -> submissionRDD
+//                .filter(submissionTuple -> submissionTuple._2
+//                        .get(question.getQuestionId()).getFinalAnswer()
+//                        .equals(question.getAnswer()))
+//                .map(Tuple2::swap)
+//                .sortBy(submission -> submission._1.get(question.getQuestionId()).getTotalVisits(), false, 1));
+//    }
 }
