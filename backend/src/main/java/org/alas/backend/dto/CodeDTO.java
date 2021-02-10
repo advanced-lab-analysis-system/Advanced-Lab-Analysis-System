@@ -12,6 +12,7 @@ public class CodeDTO {
     private String questionId;
     private Integer language_id;
     private String code;
-    private String customInput;
+    private String stdin;
+    private String expectedOutput;
     private Boolean submit;
 }

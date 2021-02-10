@@ -1,5 +1,6 @@
 package org.alas.backend.repositories;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.alas.backend.documents.Submission;
 import org.alas.backend.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +16,15 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface SubmissionRepository extends ReactiveMongoRepository<Submission,String>, CustomizedSubmissionRepository {
 
+    Mono<Submission> findByExamIdAndCandidateId(String examId, String candidateId);
+
     Flux<Submission> findAllByExamId(String examId);
     Mono<?> deleteAllByExamId(String examId);
 }
 
 interface CustomizedSubmissionRepository {
     Mono<?> updateByExamIdAndCandidateIdAndQuestionId(String examId, String candidateId, VisitDTO visit);
-    Mono<?> updateByExamIdAndCandidateIdAndQuestionId(String examId, String candidateId, String questionId, GetSubmissionResponse getSubmissionResponse);
+    Mono<?> updateByExamIdAndCandidateIdAndQuestionId(String examId, String candidateId, String questionId, CodeSubmission codeSubmission, GetSubmissionResponse getSubmissionResponse);
 }
 
 class CustomizedSubmissionRepositoryImpl implements CustomizedSubmissionRepository {
@@ -42,16 +45,19 @@ class CustomizedSubmissionRepositoryImpl implements CustomizedSubmissionReposito
         return reactiveMongoTemplate.upsert(query, update, Submission.class);
     }
 
-    public Mono<?> updateByExamIdAndCandidateIdAndQuestionId(String examId, String candidateId, String questionId, GetSubmissionResponse getSubmissionResponse){
-        System.out.println("In update method" + questionId);
+    public Mono<?> updateByExamIdAndCandidateIdAndQuestionId(String examId, String candidateId, String questionId, CodeSubmission codeSubmission, GetSubmissionResponse getSubmissionResponse){
+        System.out.println("In update method : qid " + questionId);
         System.out.println(getSubmissionResponse);
         Query query = new Query();
         query.addCriteria(Criteria.where("examId").is(examId))
                 .addCriteria(Criteria.where("candidateId").is(candidateId));
         Update update = new Update();
         update.push("allSubmissions." + questionId + ".allCodeSubmissions", getSubmissionResponse);
-        //update.push("allSubmissions." + questionId + ".visits", new VisitDetails(visit.getVisitStartTime(), visit.getVisitEndTime(), visit.getSelectedAnswer()));
-        //update.set("allSubmissions." + questionId + ".finalAnswer", visit.getSelectedAnswer());
+        if(codeSubmission.getBestSubmissionScore()<=getSubmissionResponse.getScore()){
+            update.set("allSubmissions." + questionId + ".bestSubmission",codeSubmission.getTotalNoOfSubmissions());
+            update.set("allSubmissions." + questionId + ".bestSubmissionScore",getSubmissionResponse.getScore());
+            System.out.println("Updated bestSubmissionScore");
+        }
         update.inc("allSubmissions." + questionId + ".totalNoOfSubmissions");
         return reactiveMongoTemplate.upsert(query, update, Submission.class);
     }
