@@ -43,4 +43,8 @@ public class SubmissionHandler {
                                     , getSubmissionResponse);
                 });
     }
+
+    public void submitExam(String examId, String candidateId) {
+        submissionRepository.updateByExamIdAndCandidateId(examId,candidateId,"submitted").subscribe();
+    }
 }

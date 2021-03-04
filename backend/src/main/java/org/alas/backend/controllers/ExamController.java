@@ -49,15 +49,21 @@ public class ExamController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping("/candidate/exams/{examId}/submit")
+    public ResponseEntity<?> submitExam(@PathVariable String examId, @RequestParam String candidateId){
+        submissionHandler.submitExam(examId, candidateId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("/candidate/exams")
-    public ResponseEntity<?> getAllExams() {
-        Flux<ExamDTO> examFlux = examHandler.getAllExams();
+    public ResponseEntity<?> getAllExams(@RequestParam String candidateId) {
+        Flux<ExamDTO> examFlux = examHandler.getAllExams(examHandler.getSubmissionStatusMap(candidateId));
         return new ResponseEntity<>(examFlux, HttpStatus.OK);
     }
 
     @GetMapping("/candidate/exams/{examId}")
-    public ResponseEntity<?> getExamWithoutAnswersById(@PathVariable String examId) {
-        Mono<?> examDataDTOMono = examHandler.getExamWithoutAnswersById(examId);
+    public ResponseEntity<?> getExamWithoutAnswersById(@PathVariable String examId, @RequestParam String candidateId) {
+        Mono<?> examDataDTOMono = examHandler.getExamWithoutAnswersById(examId, candidateId);
         return new ResponseEntity<>(examDataDTOMono, HttpStatus.OK);
     }
 

@@ -17,12 +17,13 @@ import reactor.core.publisher.Mono;
 public interface SubmissionRepository extends ReactiveMongoRepository<Submission,String>, CustomizedSubmissionRepository {
 
     Mono<Submission> findByExamIdAndCandidateId(String examId, String candidateId);
-
+    Flux<Submission> findAllByCandidateId(String candidateId);
     Flux<Submission> findAllByExamId(String examId);
     Mono<?> deleteAllByExamId(String examId);
 }
 
 interface CustomizedSubmissionRepository {
+    Mono<?> updateByExamIdAndCandidateId(String examId, String candidateId, String status);
     Mono<?> updateByExamIdAndCandidateIdAndQuestionId(String examId, String candidateId, VisitDTO visit);
     Mono<?> updateByExamIdAndCandidateIdAndQuestionId(String examId, String candidateId, String questionId, CodeSubmission codeSubmission, GetSubmissionResponse getSubmissionResponse);
 }
@@ -32,6 +33,16 @@ class CustomizedSubmissionRepositoryImpl implements CustomizedSubmissionReposito
     @Autowired
     private ReactiveMongoTemplate reactiveMongoTemplate;
 
+
+    @Override
+    public Mono<?> updateByExamIdAndCandidateId(String examId, String candidateId, String status) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("examId").is(examId))
+                .addCriteria(Criteria.where("candidateId").is(candidateId));
+        Update update = new Update();
+        update.set("sessionStatus", status);
+        return reactiveMongoTemplate.upsert(query, update, Submission.class);
+    }
 
     public Mono<?> updateByExamIdAndCandidateIdAndQuestionId(String examId, String candidateId, VisitDTO visit) {
         String key = visit.getQuestionId();

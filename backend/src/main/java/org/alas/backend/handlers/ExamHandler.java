@@ -52,6 +52,7 @@ public class ExamHandler {
                     Submission submission = new Submission();
                     submission.setExamId(exam.getExamId());
                     submission.setCandidateId(candidate.getUsername());
+                    submission.setSessionStatus("upcoming");
                     Map<String, Object> eachSubmissionMap = new HashMap<>();
                     exam.getQuestionList().forEach(question -> {
                         if(question.getQuestionType().equals("mcq"))
@@ -67,27 +68,35 @@ public class ExamHandler {
 
     }
 
-    public Flux<ExamDTO> getAllExams() {
+    public Map<String, String> getSubmissionStatusMap(String candidateId){
+        Map<String, String> sessionStatusMap = new HashMap<>();
+        submissionRepository.findAllByCandidateId(candidateId)
+                .subscribe(submission -> sessionStatusMap.put(submission.getExamId(),submission.getSessionStatus()));
+        return sessionStatusMap;
+    }
+
+    public Flux<ExamDTO> getAllExams(Map<String, String> sessionStatusMap) {
         return examRepository.findAll().map(exam ->
-                new ExamDTO(exam.getExamId(),
-                        exam.getBatchId(),
-                        exam.getExamName(),
-                        exam.getSubject(),
-                        exam.getNoOfQuestions(),
-                        exam.getExamStartTime(),
-                        exam.getExamEndTime(),
-                        exam.getAuthor(),
-                        exam.getStatus()
-                ));
+                                    new ExamDTO(exam.getExamId(),
+                                            exam.getBatchId(),
+                                            exam.getExamName(),
+                                            exam.getSubject(),
+                                            exam.getNoOfQuestions(),
+                                            exam.getExamStartTime(),
+                                            exam.getExamEndTime(),
+                                            exam.getAuthor(),
+                                            exam.getStatus(),
+                                            sessionStatusMap.get(exam.getExamId())));
     }
 
     public Mono<Exam> getExamWithAnswersById(String exam_id) {
         return examRepository.findByExamId(exam_id);
     }
 
-    public Mono<?> getExamWithoutAnswersById(String exam_id){
+    public Mono<?> getExamWithoutAnswersById(String examId, String candidateId){
         ObjectMapper objectMapper = new ObjectMapper();
-        return examRepository.findByExamId(exam_id).map(exam ->
+        return examRepository.findByExamId(examId)
+                .map(exam ->
                 new ExamDataDTO(exam.getExamId(),
                         exam.getBatchId(),
                         exam.getExamName(),
@@ -114,7 +123,8 @@ public class ExamHandler {
                                 questionFiltered = question;
                             }
                             return questionFiltered;
-                        }).collect(Collectors.toList())));
+                        }).collect(Collectors.toList())))
+                .then(submissionRepository.updateByExamIdAndCandidateId(examId, candidateId,"running"));
     }
 
     public void endExamByExamId(String examId) {
