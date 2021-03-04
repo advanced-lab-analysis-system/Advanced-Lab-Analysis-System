@@ -18,6 +18,7 @@ public class Submission {
 
     private String examId;
     private String candidateId;
+    private String sessionStatus;
     private Map<String, Object> allSubmissions;
 
     @Override

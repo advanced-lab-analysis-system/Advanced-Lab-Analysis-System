@@ -32,5 +32,5 @@ public class ExamDTO {
     private LocalDateTime examEndTime;
     private String author;
     private String status;
-
+    private String sessionStatus;
 }
