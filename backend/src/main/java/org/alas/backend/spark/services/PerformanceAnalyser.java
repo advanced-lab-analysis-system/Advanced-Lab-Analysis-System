@@ -45,12 +45,12 @@ public class PerformanceAnalyser {
                 .subscribe(exam -> questionList.addAll(
                         exam.getQuestionList().stream()
                                 .filter(question -> question.getQuestionType().equals("mcq"))
-                                .map(question ->{
+                                .map(question -> {
                                     QuestionMCQ questionMCQ = new QuestionMCQ();
                                     try {
                                         String questionString = objectMapper.writeValueAsString(question.getQuestion());
                                         //System.out.println("In endExamByExamId1"+questionString);
-                                        questionMCQ = objectMapper.readValue(questionString,QuestionMCQ.class);
+                                        questionMCQ = objectMapper.readValue(questionString, QuestionMCQ.class);
                                     } catch (JsonProcessingException e) {
                                         e.printStackTrace();
                                     }

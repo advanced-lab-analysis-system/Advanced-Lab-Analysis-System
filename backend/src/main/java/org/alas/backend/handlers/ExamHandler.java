@@ -37,7 +37,7 @@ public class ExamHandler {
         populateSubmissionCollection(exam);
         Map<String, Map<String, Object>> submissions = new HashMap<>();
         userRepository.findAllByRolesContaining("ROLE_CANDIDATE")
-                .subscribe(user -> submissions.put(user.getUsername(),new HashMap<>()),
+                .subscribe(user -> submissions.put(user.getUsername(), new HashMap<>()),
                         error -> System.err.println("Error: " + error),
                         () -> {
                             exam.setSubmissions(submissions);
@@ -46,7 +46,6 @@ public class ExamHandler {
     }
 
     private void populateSubmissionCollection(Exam exam) {
-
         submissionRepository.saveAll(userRepository.findAllByRolesContaining("ROLE_CANDIDATE")
                 .map(candidate -> {
                     Submission submission = new Submission();
@@ -55,49 +54,32 @@ public class ExamHandler {
                     submission.setSessionStatus("upcoming");
                     Map<String, Object> eachSubmissionMap = new HashMap<>();
                     exam.getQuestionList().forEach(question -> {
-                        if(question.getQuestionType().equals("mcq"))
+                        if (question.getQuestionType().equals("mcq"))
                             eachSubmissionMap.put(question.getQuestionId(), new MCQSubmission("", 0, new ArrayList<>()));
                         else
                             eachSubmissionMap.put(question.getQuestionId(),
-                                    new CodeSubmission(0,-1,0.0
-                                            ,new ArrayList<>()));
+                                    new CodeSubmission(0, -1, 0.0
+                                            , new ArrayList<>()));
                     });
                     submission.setAllSubmissions(eachSubmissionMap);
                     return submission;
                 })).subscribe();
-
     }
 
-    public Map<String, String> getSubmissionStatusMap(String candidateId){
+    public Map<String, String> getSubmissionStatusMap(String candidateId) {
         Map<String, String> sessionStatusMap = new HashMap<>();
         submissionRepository.findAllByCandidateId(candidateId)
-                .subscribe(submission -> sessionStatusMap.put(submission.getExamId(),submission.getSessionStatus()));
+                .subscribe(submission -> {
+                    System.out.println(submission.getExamId() + " " + submission.getSessionStatus());
+                    sessionStatusMap.put(submission.getExamId(), submission.getSessionStatus());
+                });
+        System.out.println(sessionStatusMap);
         return sessionStatusMap;
     }
 
     public Flux<ExamDTO> getAllExams(Map<String, String> sessionStatusMap) {
         return examRepository.findAll().map(exam ->
-                                    new ExamDTO(exam.getExamId(),
-                                            exam.getBatchId(),
-                                            exam.getExamName(),
-                                            exam.getSubject(),
-                                            exam.getNoOfQuestions(),
-                                            exam.getExamStartTime(),
-                                            exam.getExamEndTime(),
-                                            exam.getAuthor(),
-                                            exam.getStatus(),
-                                            sessionStatusMap.get(exam.getExamId())));
-    }
-
-    public Mono<Exam> getExamWithAnswersById(String exam_id) {
-        return examRepository.findByExamId(exam_id);
-    }
-
-    public Mono<?> getExamWithoutAnswersById(String examId, String candidateId){
-        ObjectMapper objectMapper = new ObjectMapper();
-        return examRepository.findByExamId(examId)
-                .map(exam ->
-                new ExamDataDTO(exam.getExamId(),
+                new ExamDTO(exam.getExamId(),
                         exam.getBatchId(),
                         exam.getExamName(),
                         exam.getSubject(),
@@ -106,25 +88,44 @@ public class ExamHandler {
                         exam.getExamEndTime(),
                         exam.getAuthor(),
                         exam.getStatus(),
-                        exam.getQuestionList().stream().map(question -> {
-                            Question questionFiltered = new Question();
-                            if (question.getQuestionType().equals("mcq")){
-                                questionFiltered.setQuestionId(question.getQuestionId());
-                                questionFiltered.setQuestionType(question.getQuestionType());
-                                try {
-                                    String questionString = objectMapper.writeValueAsString(question.getQuestion());
-                                    QuestionMCQ questionMCQ = objectMapper.readValue(questionString,QuestionMCQ.class);
-                                    questionFiltered.setQuestion(new QuestionMCQDTO(questionMCQ.getStatement(),questionMCQ.getOptions()));
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            else {
-                                questionFiltered = question;
-                            }
-                            return questionFiltered;
-                        }).collect(Collectors.toList())))
-                .then(submissionRepository.updateByExamIdAndCandidateId(examId, candidateId,"running"));
+                        sessionStatusMap.get(exam.getExamId())));
+    }
+
+    public Mono<Exam> getExamWithAnswersById(String exam_id) {
+        return examRepository.findByExamId(exam_id);
+    }
+
+    public Mono<?> getExamWithoutAnswersById(String examId, String candidateId) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        submissionRepository.updateByExamIdAndCandidateId(examId, candidateId, "running").subscribe();
+        return examRepository.findByExamId(examId)
+                .map(exam ->
+                        new ExamDataDTO(exam.getExamId(),
+                                exam.getBatchId(),
+                                exam.getExamName(),
+                                exam.getSubject(),
+                                exam.getNoOfQuestions(),
+                                exam.getExamStartTime(),
+                                exam.getExamEndTime(),
+                                exam.getAuthor(),
+                                exam.getStatus(),
+                                exam.getQuestionList().stream().map(question -> {
+                                    Question questionFiltered = new Question();
+                                    if (question.getQuestionType().equals("mcq")) {
+                                        questionFiltered.setQuestionId(question.getQuestionId());
+                                        questionFiltered.setQuestionType(question.getQuestionType());
+                                        try {
+                                            String questionString = objectMapper.writeValueAsString(question.getQuestion());
+                                            QuestionMCQ questionMCQ = objectMapper.readValue(questionString, QuestionMCQ.class);
+                                            questionFiltered.setQuestion(new QuestionMCQDTO(questionMCQ.getStatement(), questionMCQ.getOptions()));
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    } else {
+                                        questionFiltered = question;
+                                    }
+                                    return questionFiltered;
+                                }).collect(Collectors.toList())));
     }
 
     public void endExamByExamId(String examId) {
@@ -133,20 +134,20 @@ public class ExamHandler {
         examRepository.findByExamId(examId)
                 .subscribe(exam -> mcqEvaluator.setQuestionList(exam.getQuestionList().stream()
                                 .filter(question -> question.getQuestionType().equals("mcq"))
-                                .map(question ->{
+                                .map(question -> {
                                     QuestionMCQ questionMCQ = new QuestionMCQ();
                                     try {
                                         String questionString = objectMapper.writeValueAsString(question.getQuestion());
                                         //System.out.println("In endExamByExamId1"+questionString);
-                                        questionMCQ = objectMapper.readValue(questionString,QuestionMCQ.class);
+                                        questionMCQ = objectMapper.readValue(questionString, QuestionMCQ.class);
                                     } catch (JsonProcessingException e) {
                                         e.printStackTrace();
                                     }
                                     return new MCQQuestion(question.getQuestionId(), questionMCQ.getAnswer());
                                 })
                                 .collect(Collectors.toList()))
-                        ,null
-                        ,()->
+                        , null
+                        , () ->
                         {
                             submissionRepository.findAllByExamId(examId)
                                     .subscribe(submission ->

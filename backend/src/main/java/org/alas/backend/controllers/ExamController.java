@@ -74,6 +74,7 @@ public class ExamController {
         switch (questionType) {
             case "mcq":
                 VisitDTO visitDTO = objectMapper.readValue(visit, VisitDTO.class);
+                System.out.println(visitDTO);
                 Mono<?> responseMono = submissionHandler.addVisit(examId, candidateId, visitDTO);
                 return new ResponseEntity<>(responseMono, HttpStatus.CREATED);
             case "coding":
