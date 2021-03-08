@@ -1,19 +1,17 @@
 package org.alas.backend.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.alas.backend.documents.Exam;
 import org.alas.backend.dto.*;
+import org.alas.backend.handlers.ExamHandler;
 import org.alas.backend.handlers.JudgeHandler;
+import org.alas.backend.handlers.SubmissionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import org.alas.backend.documents.Exam;
-
-import org.alas.backend.handlers.ExamHandler;
-import org.alas.backend.handlers.SubmissionHandler;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -50,14 +48,14 @@ public class ExamController {
     }
 
     @GetMapping("/candidate/exams/{examId}/submit")
-    public ResponseEntity<?> submitExam(@PathVariable String examId, @RequestParam String candidateId){
+    public ResponseEntity<?> submitExam(@PathVariable String examId, @RequestParam String candidateId) {
         submissionHandler.submitExam(examId, candidateId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/candidate/exams")
     public ResponseEntity<?> getAllExams(@RequestParam String candidateId) {
-        Flux<ExamDTO> examFlux = examHandler.getAllExams(examHandler.getSubmissionStatusMap(candidateId));
+        Flux<ExamDTO> examFlux = examHandler.getAllExams(candidateId);
         return new ResponseEntity<>(examFlux, HttpStatus.OK);
     }
 

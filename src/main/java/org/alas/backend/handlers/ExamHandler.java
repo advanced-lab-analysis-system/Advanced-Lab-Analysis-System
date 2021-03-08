@@ -2,14 +2,13 @@ package org.alas.backend.handlers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.alas.backend.documents.Exam;
 import org.alas.backend.documents.Submission;
 import org.alas.backend.dto.*;
-import org.alas.backend.documents.Exam;
 import org.alas.backend.evaluators.MCQEvaluator;
-import org.alas.backend.dto.MCQQuestion;
 import org.alas.backend.repositories.ExamRepository;
-import org.alas.backend.repositories.UserRepository;
 import org.alas.backend.repositories.SubmissionRepository;
+import org.alas.backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -66,18 +65,12 @@ public class ExamHandler {
                 })).subscribe();
     }
 
-    public Map<String, String> getSubmissionStatusMap(String candidateId) {
-        Map<String, String> sessionStatusMap = new HashMap<>();
-        submissionRepository.findAllByCandidateId(candidateId)
-                .subscribe(submission -> {
-                    System.out.println(submission.getExamId() + " " + submission.getSessionStatus());
-                    sessionStatusMap.put(submission.getExamId(), submission.getSessionStatus());
-                });
-        System.out.println(sessionStatusMap);
-        return sessionStatusMap;
-    }
 
-    public Flux<ExamDTO> getAllExams(Map<String, String> sessionStatusMap) {
+    public Flux<ExamDTO> getAllExams(String candidateId) {
+        Map<String, String> sessionStatusMap = new HashMap<>();
+        submissionRepository.findAllByCandidateId(candidateId).toStream().forEach(submission -> {
+            sessionStatusMap.put(submission.getExamId(), submission.getSessionStatus());
+        });
         return examRepository.findAll().map(exam ->
                 new ExamDTO(exam.getExamId(),
                         exam.getBatchId(),
