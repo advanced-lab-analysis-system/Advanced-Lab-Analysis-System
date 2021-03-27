@@ -84,6 +84,20 @@ public class ExamHandler {
                         sessionStatusMap.get(exam.getExamId())));
     }
 
+    public Flux<ExamDTO> getAllAuthorExams(String authorId) {
+        return examRepository.findAll().map(exam ->
+                new ExamDTO(exam.getExamId(),
+                        exam.getBatchId(),
+                        exam.getExamName(),
+                        exam.getSubject(),
+                        exam.getNoOfQuestions(),
+                        exam.getExamStartTime(),
+                        exam.getExamEndTime(),
+                        exam.getAuthor(),
+                        exam.getStatus(),
+                        ""));
+    }
+
     public Mono<Exam> getExamWithAnswersById(String exam_id) {
         return examRepository.findByExamId(exam_id);
     }

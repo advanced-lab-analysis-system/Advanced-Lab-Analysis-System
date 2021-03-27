@@ -1,7 +1,6 @@
 package org.alas.backend.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.alas.backend.documents.Exam;
 import org.alas.backend.dto.*;
 import org.alas.backend.handlers.ExamHandler;
 import org.alas.backend.handlers.JudgeHandler;
@@ -16,10 +15,9 @@ import reactor.core.publisher.Mono;
 import java.io.IOException;
 import java.time.Duration;
 
-
 @RestController
-public class ExamController {
-
+@RequestMapping("/candidate")
+public class CandidateController {
     @Autowired
     private ExamHandler examHandler;
 
@@ -29,43 +27,25 @@ public class ExamController {
     @Autowired
     private JudgeHandler judgeHandler;
 
-    @PostMapping("/author/exams")
-    public ResponseEntity<?> createExam(@RequestBody Exam exam) {
-        examHandler.createExam(exam);
-        return new ResponseEntity<>("Exam Created", HttpStatus.CREATED);
-    }
-
-    @GetMapping("/author/exams/{examId}")
-    public ResponseEntity<?> getExamWithAnswersById(@PathVariable String examId) {
-        Mono<Exam> examDataDTOMono = examHandler.getExamWithAnswersById(examId);
-        return new ResponseEntity<>(examDataDTOMono, HttpStatus.OK);
-    }
-
-    @GetMapping("/author/exams/{examId}/end")
-    public ResponseEntity<?> endExam(@PathVariable String examId) {
-        examHandler.endExamByExamId(examId);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @GetMapping("/candidate/exams/{examId}/submit")
+    @GetMapping("/exams/{examId}/submit")
     public ResponseEntity<?> submitExam(@PathVariable String examId, @RequestParam String candidateId) {
         submissionHandler.submitExam(examId, candidateId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/candidate/exams")
+    @GetMapping("/exams")
     public ResponseEntity<?> getAllExams(@RequestParam String candidateId) {
         Flux<ExamDTO> examFlux = examHandler.getAllExams(candidateId);
         return new ResponseEntity<>(examFlux, HttpStatus.OK);
     }
 
-    @GetMapping("/candidate/exams/{examId}")
+    @GetMapping("/exams/{examId}")
     public ResponseEntity<?> getExamWithoutAnswersById(@PathVariable String examId, @RequestParam String candidateId) {
         Mono<?> examDataDTOMono = examHandler.getExamWithoutAnswersById(examId, candidateId);
         return new ResponseEntity<>(examDataDTOMono, HttpStatus.OK);
     }
 
-    @PostMapping("/candidate/submission")
+    @PostMapping("/submission")
     public ResponseEntity<?> newSubmission(@RequestParam String examId, @RequestParam String candidateId,
                                            @RequestParam String questionType, @RequestBody String visit) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
