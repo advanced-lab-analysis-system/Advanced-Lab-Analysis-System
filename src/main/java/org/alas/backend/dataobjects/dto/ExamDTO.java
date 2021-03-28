@@ -1,4 +1,5 @@
-package org.alas.backend.dto;
+package org.alas.backend.dataobjects.dto;
+
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -10,12 +11,11 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExamDataDTO {
+public class ExamDTO {
 
     private String examId;
     private String batchId;
@@ -32,5 +32,5 @@ public class ExamDataDTO {
     private LocalDateTime examEndTime;
     private String author;
     private String status;
-    private List<Question> questions;
+    private String sessionStatus;
 }

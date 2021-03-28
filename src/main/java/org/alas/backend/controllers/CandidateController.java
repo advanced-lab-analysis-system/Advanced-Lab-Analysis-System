@@ -1,7 +1,11 @@
 package org.alas.backend.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.alas.backend.dto.*;
+import org.alas.backend.dataobjects.*;
+import org.alas.backend.dataobjects.dto.CodeDTO;
+import org.alas.backend.dataobjects.dto.ExamDTO;
+import org.alas.backend.dataobjects.dto.JudgeRequestDTO;
+import org.alas.backend.dataobjects.dto.VisitDTO;
 import org.alas.backend.handlers.ExamHandler;
 import org.alas.backend.handlers.JudgeHandler;
 import org.alas.backend.handlers.SubmissionHandler;
@@ -28,20 +32,20 @@ public class CandidateController {
     private JudgeHandler judgeHandler;
 
     @GetMapping("/exams/{examId}/submit")
-    public ResponseEntity<?> submitExam(@PathVariable String examId, @RequestParam String candidateId) {
+    public ResponseEntity<String> submitExam(@PathVariable String examId, @RequestParam String candidateId) {
         submissionHandler.submitExam(examId, candidateId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/exams")
-    public ResponseEntity<?> getAllExams(@RequestParam String candidateId) {
+    public ResponseEntity<Flux<ExamDTO>> getAllExams(@RequestParam String candidateId) {
         Flux<ExamDTO> examFlux = examHandler.getAllExams(candidateId);
         return new ResponseEntity<>(examFlux, HttpStatus.OK);
     }
 
     @GetMapping("/exams/{examId}")
-    public ResponseEntity<?> getExamWithoutAnswersById(@PathVariable String examId, @RequestParam String candidateId) {
-        Mono<?> examDataDTOMono = examHandler.getExamWithoutAnswersById(examId, candidateId);
+    public ResponseEntity<Mono<?>> getExamWithoutAnswersById(@PathVariable String examId, @RequestParam String candidateId) {
+        Mono<?> examDataDTOMono = examHandler.getExamWithoutAnswers(examId, candidateId);
         return new ResponseEntity<>(examDataDTOMono, HttpStatus.OK);
     }
 

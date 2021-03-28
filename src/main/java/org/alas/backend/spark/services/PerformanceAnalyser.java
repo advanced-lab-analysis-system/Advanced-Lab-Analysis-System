@@ -2,11 +2,8 @@ package org.alas.backend.spark.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.alas.backend.documents.Submission;
-import org.alas.backend.dto.MCQQuestion;
-import org.alas.backend.dto.MCQSubmission;
-import org.alas.backend.dto.Question;
-import org.alas.backend.dto.QuestionMCQ;
+import org.alas.backend.dataobjects.MCQQuestion;
+import org.alas.backend.dataobjects.QuestionMCQ;
 import org.alas.backend.repositories.ExamRepository;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;

@@ -1,4 +1,4 @@
-package org.alas.backend.dto;
+package org.alas.backend.dataobjects.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

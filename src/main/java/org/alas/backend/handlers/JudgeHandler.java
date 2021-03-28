@@ -1,8 +1,8 @@
 package org.alas.backend.handlers;
 
-import org.alas.backend.dto.CreationResponse;
-import org.alas.backend.dto.GetSubmissionResponse;
-import org.alas.backend.dto.JudgeRequestDTO;
+import org.alas.backend.dataobjects.CreationResponse;
+import org.alas.backend.dataobjects.GetSubmissionResponse;
+import org.alas.backend.dataobjects.dto.JudgeRequestDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;

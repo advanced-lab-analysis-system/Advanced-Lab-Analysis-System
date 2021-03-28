@@ -2,9 +2,9 @@ package org.alas.backend.handlers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.alas.backend.dto.CodeSubmission;
-import org.alas.backend.dto.GetSubmissionResponse;
-import org.alas.backend.dto.VisitDTO;
+import org.alas.backend.dataobjects.CodeSubmission;
+import org.alas.backend.dataobjects.GetSubmissionResponse;
+import org.alas.backend.dataobjects.dto.VisitDTO;
 import org.alas.backend.repositories.SubmissionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

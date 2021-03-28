@@ -2,9 +2,12 @@ package org.alas.backend.handlers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.alas.backend.dataobjects.*;
+import org.alas.backend.dataobjects.dto.ExamDTO;
+import org.alas.backend.dataobjects.dto.ExamDataDTO;
+import org.alas.backend.dataobjects.dto.QuestionMCQDTO;
 import org.alas.backend.documents.Exam;
 import org.alas.backend.documents.Submission;
-import org.alas.backend.dto.*;
 import org.alas.backend.evaluators.MCQEvaluator;
 import org.alas.backend.repositories.ExamRepository;
 import org.alas.backend.repositories.SubmissionRepository;
@@ -98,11 +101,11 @@ public class ExamHandler {
                         ""));
     }
 
-    public Mono<Exam> getExamWithAnswersById(String exam_id) {
+    public Mono<Exam> getExamWithAnswers(String exam_id) {
         return examRepository.findByExamId(exam_id);
     }
 
-    public Mono<?> getExamWithoutAnswersById(String examId, String candidateId) {
+    public Mono<?> getExamWithoutAnswers(String examId, String candidateId) {
         ObjectMapper objectMapper = new ObjectMapper();
         submissionRepository.updateByExamIdAndCandidateId(examId, candidateId, "running").subscribe();
         return examRepository.findByExamId(examId)
@@ -135,7 +138,7 @@ public class ExamHandler {
                                 }).collect(Collectors.toList())));
     }
 
-    public void endExamByExamId(String examId) {
+    public void endExam(String examId) {
         MCQEvaluator mcqEvaluator = new MCQEvaluator();
         ObjectMapper objectMapper = new ObjectMapper();
         examRepository.findByExamId(examId)

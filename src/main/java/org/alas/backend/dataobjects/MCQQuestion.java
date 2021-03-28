@@ -1,4 +1,4 @@
-package org.alas.backend.dto;
+package org.alas.backend.dataobjects;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Question {
+public class MCQQuestion {
 
     private String questionId;
-    private String questionType;
-    private Object question;
+    private String answer;
 }

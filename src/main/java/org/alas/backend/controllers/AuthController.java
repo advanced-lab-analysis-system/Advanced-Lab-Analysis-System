@@ -1,8 +1,7 @@
 package org.alas.backend.controllers;
 
 import lombok.RequiredArgsConstructor;
-import lombok.var;
-import org.alas.backend.dto.AuthenticationRequest;
+import org.alas.backend.dataobjects.AuthenticationRequest;
 import org.alas.backend.repositories.UserRepository;
 import org.alas.backend.security.jwt.JwtProvider;
 import org.springframework.http.HttpHeaders;

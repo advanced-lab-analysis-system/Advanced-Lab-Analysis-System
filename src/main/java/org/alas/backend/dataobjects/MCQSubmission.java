@@ -1,9 +1,8 @@
-package org.alas.backend.dto;
+package org.alas.backend.dataobjects;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.json.JSONObject;
 
 import java.util.List;
 

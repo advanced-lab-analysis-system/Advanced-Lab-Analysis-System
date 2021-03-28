@@ -1,4 +1,4 @@
-package org.alas.backend.dto;
+package org.alas.backend.dataobjects;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,8 +9,10 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class QuestionMCQDTO {
+public class QuestionMCQ {
 
     private String statement;
     private List<String> options;
+    private String answer;
+
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /*
@@ -32,7 +33,7 @@ public class DataInitializer {
                         Flux.just("author", "admin")
                                 .flatMap(username -> {
                                     List<String> roles = "author".equals(username) ?
-                                            Arrays.asList("ROLE_AUTHOR") : Arrays.asList("ROLE_ADMIN");
+                                            Collections.singletonList("ROLE_AUTHOR") : Collections.singletonList("ROLE_ADMIN");
 
                                     User user = User.builder()
                                             .roles(roles)
@@ -48,7 +49,7 @@ public class DataInitializer {
 
         Flux.just("user_1", "user_2", "user_3", "user_4", "user_5", "user_6", "user_7", "user_8", "user_9", "user_10")
                 .flatMap(username -> {
-                    List<String> roles = Arrays.asList("ROLE_CANDIDATE");
+                    List<String> roles = Collections.singletonList("ROLE_CANDIDATE");
 
                     User user = User.builder()
                             .roles(roles)

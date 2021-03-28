@@ -1,8 +1,8 @@
 package org.alas.backend.repositories;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.alas.backend.dataobjects.dto.VisitDTO;
 import org.alas.backend.documents.Submission;
-import org.alas.backend.dto.*;
+import org.alas.backend.dataobjects.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;

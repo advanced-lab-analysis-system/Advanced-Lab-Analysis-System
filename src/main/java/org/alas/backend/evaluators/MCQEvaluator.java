@@ -3,8 +3,8 @@ package org.alas.backend.evaluators;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.alas.backend.dto.MCQQuestion;
-import org.alas.backend.dto.MCQSubmission;
+import org.alas.backend.dataobjects.MCQQuestion;
+import org.alas.backend.dataobjects.MCQSubmission;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package org.alas.backend.dto;
+package org.alas.backend.dataobjects;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
