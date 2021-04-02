@@ -26,8 +26,11 @@ interface CustomizedExamRepository {
 
 class CustomizedExamRepositoryImpl implements CustomizedExamRepository {
 
-    @Autowired
-    ReactiveMongoTemplate reactiveMongoTemplate;
+    private final ReactiveMongoTemplate reactiveMongoTemplate;
+
+    public CustomizedExamRepositoryImpl(ReactiveMongoTemplate reactiveMongoTemplate) {
+        this.reactiveMongoTemplate = reactiveMongoTemplate;
+    }
 
     @Override
     public void addSubmissionsByExamId(List<String> questionsAnsweredCorrectly, String examId, Submission submission) {

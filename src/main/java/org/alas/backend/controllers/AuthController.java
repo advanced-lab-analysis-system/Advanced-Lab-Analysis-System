@@ -29,7 +29,7 @@ public class AuthController {
     private final UserRepository userRepository;
 
     @PostMapping("/login")
-    public Mono<ResponseEntity> login(@Valid @RequestBody Mono<AuthenticationRequest> authRequest) {
+    public Mono<ResponseEntity<?>> login(@Valid @RequestBody Mono<AuthenticationRequest> authRequest) {
 
         return authRequest
                 .flatMap(login -> this.authenticationManager
