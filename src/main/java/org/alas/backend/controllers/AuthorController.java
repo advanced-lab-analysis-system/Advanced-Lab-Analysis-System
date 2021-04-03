@@ -138,6 +138,7 @@ public class AuthorController {
      *   examId: id of the required exam
      *   examData: changed exam data
      *  output:
+     *  @return
      *   if(updated properly): 200 OK
      *   else: error
      * */
@@ -147,7 +148,25 @@ public class AuthorController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /*
+     *
+     * TODO: Delete exam using given examId
+     *  input:
+     *   examId: id of the required exam
+     *  output:
+     *   if(deleted properly): 200 OK
+     *   else: error
+     * */
+    @DeleteMapping("/exam/{examId}")
+    public ResponseEntity<?> deleteExamByExamId(@PathVariable String examId) {
+//        TODO: Write logic here
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
+    /*
+     *
+     * end the exam prematurely
+     * */
     @GetMapping("/exams/{examId}/end")
     public ResponseEntity<String> endExam(@PathVariable String examId) {
         examHandler.endExam(examId);
