@@ -19,9 +19,7 @@ import java.util.List;
 public class ExamDataDTO {
 
     private String examId;
-    private String batchId;
     private String examName;
-    private String subject;
     private int noOfQuestions;
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)

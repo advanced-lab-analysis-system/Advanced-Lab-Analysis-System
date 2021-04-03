@@ -21,19 +21,23 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 public class ExamHandler {
 
-    @Autowired
-    private ExamRepository examRepository;
+    private final ExamRepository examRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private SubmissionRepository submissionRepository;
+    private final SubmissionRepository submissionRepository;
+
+    public ExamHandler(ExamRepository examRepository, UserRepository userRepository, SubmissionRepository submissionRepository) {
+        this.examRepository = examRepository;
+        this.userRepository = userRepository;
+        this.submissionRepository = submissionRepository;
+    }
 
     public void createExam(Exam exam) {
         populateSubmissionCollection(exam);
@@ -43,6 +47,7 @@ public class ExamHandler {
                         error -> System.err.println("Error: " + error),
                         () -> {
                             exam.setSubmissions(submissions);
+                            exam.setExamId(UUID.randomUUID().toString().replace("-", ""));
                             examRepository.save(exam).subscribe();
                         });
     }
@@ -76,13 +81,11 @@ public class ExamHandler {
         });
         return examRepository.findAll().map(exam ->
                 new ExamDTO(exam.getExamId(),
-                        exam.getBatchId(),
                         exam.getExamName(),
-                        exam.getSubject(),
                         exam.getNoOfQuestions(),
                         exam.getExamStartTime(),
                         exam.getExamEndTime(),
-                        exam.getAuthor(),
+                        exam.getAuthorId(),
                         exam.getStatus(),
                         sessionStatusMap.get(exam.getExamId())));
     }
@@ -90,13 +93,11 @@ public class ExamHandler {
     public Flux<ExamDTO> getAllAuthorExams(String authorId) {
         return examRepository.findAll().map(exam ->
                 new ExamDTO(exam.getExamId(),
-                        exam.getBatchId(),
                         exam.getExamName(),
-                        exam.getSubject(),
                         exam.getNoOfQuestions(),
                         exam.getExamStartTime(),
                         exam.getExamEndTime(),
-                        exam.getAuthor(),
+                        exam.getAuthorId(),
                         exam.getStatus(),
                         ""));
     }
@@ -111,13 +112,11 @@ public class ExamHandler {
         return examRepository.findByExamId(examId)
                 .map(exam ->
                         new ExamDataDTO(exam.getExamId(),
-                                exam.getBatchId(),
                                 exam.getExamName(),
-                                exam.getSubject(),
                                 exam.getNoOfQuestions(),
                                 exam.getExamStartTime(),
                                 exam.getExamEndTime(),
-                                exam.getAuthor(),
+                                exam.getAuthorId(),
                                 exam.getStatus(),
                                 exam.getQuestionList().stream().map(question -> {
                                     Question questionFiltered = new Question();

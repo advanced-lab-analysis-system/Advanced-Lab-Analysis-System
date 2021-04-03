@@ -21,19 +21,17 @@ public class Exam {
 
     @Indexed(unique = true)
     private String examId;
-    private String batchId;
     private String examName;
-    private String subject;
     private int noOfQuestions;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime examStartTime;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime examEndTime;
-    private String author;
+    private String authorId;
     private String status;
     private List<Question> questionList;
 
-    //Here String(Key) is candidateId and Object is his submission for this exam
+    //Here String(Key) is candidateId and Object is his/her submission for this exam
     private Map<String, Map<String, Object>> submissions;
 }
 

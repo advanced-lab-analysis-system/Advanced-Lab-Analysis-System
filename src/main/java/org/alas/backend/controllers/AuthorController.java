@@ -112,17 +112,41 @@ public class AuthorController {
         return new ResponseEntity<>(examFlux, HttpStatus.OK);
     }
 
+    /*
+     * Create a new Exam
+     * */
     @PostMapping("/exams")
     public ResponseEntity<String> createExam(@RequestBody Exam exam) {
         examHandler.createExam(exam);
         return new ResponseEntity<>("Exam Created", HttpStatus.CREATED);
     }
 
+    /*
+     *
+     * TODO: Review function and refactor
+     * */
     @GetMapping("/exams/{examId}")
     public ResponseEntity<Mono<Exam>> getExamWithAnswersById(@PathVariable String examId) {
         Mono<Exam> examDataDTOMono = examHandler.getExamWithAnswers(examId);
         return new ResponseEntity<>(examDataDTOMono, HttpStatus.OK);
     }
+
+    /*
+     *
+     * TODO: Update exam using given examId
+     *  input:
+     *   examId: id of the required exam
+     *   examData: changed exam data
+     *  output:
+     *   if(updated properly): 200 OK
+     *   else: error
+     * */
+    @PutMapping("/exam/{examId}")
+    public ResponseEntity<?> updateExamByExamId(@PathVariable String examId) {
+//        TODO: Write logic here
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
     @GetMapping("/exams/{examId}/end")
     public ResponseEntity<String> endExam(@PathVariable String examId) {
