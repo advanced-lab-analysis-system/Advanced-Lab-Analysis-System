@@ -1,0 +1,9 @@
+openapi: 3.0.3
+info:
+  title: ALAS Documentation
+  description: ALAS Documentation
+  version: 0.1.0
+servers:
+  - url: 'https'
+paths:
+  
