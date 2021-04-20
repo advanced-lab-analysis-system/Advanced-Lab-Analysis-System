@@ -27,9 +27,16 @@ keycloak:
         - AUTHOR
         - ADMIN
       securityCollections:
-        - name: oollalal
+        - name: ping
           patterns:
             - /ping
+    - authRoles:
+        - AUTHOR
+        - ADMINN
+      securityCollections:
+        - name: Author
+          patterns:
+            - /author
 
 logging:
   level:
