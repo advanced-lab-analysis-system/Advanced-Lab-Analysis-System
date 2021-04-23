@@ -23,7 +23,7 @@ public class AuthorController {
 
     /*
      *
-     * TODO: Extract All Modules related the author.
+     * Returns all modules related to the given Author
      *  input:
      *   authorId - the id of the author making the request
      *  output:
@@ -32,7 +32,6 @@ public class AuthorController {
      * */
     @GetMapping("/modules")
     public ResponseEntity<List<Module>> getAllModules(KeycloakPrincipal<KeycloakSecurityContext> principal) {
-//        TODO: write logic here.
         String authorId = principal.getKeycloakSecurityContext().getToken().getSubject();
         try {
             return new ResponseEntity<>(moduleService.getAllModulesByAuthorId(authorId), HttpStatus.OK);
@@ -43,7 +42,7 @@ public class AuthorController {
 
     /*
      *
-     * TODO: Create a new module with the given details
+     * Creates a new module with the given details
      *  input:
      *   authorId - the id of the author creating the module
      *   moduleName - name of the module
@@ -57,7 +56,6 @@ public class AuthorController {
      * */
     @PostMapping("/modules")
     public ResponseEntity<?> createNewModule(KeycloakPrincipal<KeycloakSecurityContext> principal, Module module) {
-//        TODO : write logic here
         String authorId = principal.getKeycloakSecurityContext().getToken().getSubject();
         try {
             module.setOriginalAuthor(authorId);
@@ -70,16 +68,8 @@ public class AuthorController {
 
     /*
      *
-     * TODO: Return all data associated with the given moduleId
-     *  input:
-     *   moduleId: ID of the required Module
-     *  output:
-     *   name: module name
-     *   desc: module Description
-     *   batches: list of batches associated with the module
-     *   originalAuthor: id of original author
-     *   authorList: List of authors with their permissions
-     *   examsList: List of exams associated with the module
+     * @return
+     *  Module Object
      * */
     @GetMapping("/module/{moduleId}")
     public ResponseEntity<Module> getModuleData(@PathVariable String moduleId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
