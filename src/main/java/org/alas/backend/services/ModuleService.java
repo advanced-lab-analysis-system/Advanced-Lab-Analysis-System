@@ -4,6 +4,8 @@ import org.alas.backend.documents.Module;
 import org.alas.backend.repositories.ModuleRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class ModuleService {
@@ -32,6 +34,15 @@ public class ModuleService {
             } else {
                 return null;
             }
+        } catch (Exception e) {
+            System.err.println(e.toString());
+        }
+        return null;
+    }
+
+    public List<Module> getAllModulesByAuthorId(String authorId) {
+        try {
+            return moduleRepository.findAllByAuthorId(authorId);
         } catch (Exception e) {
             System.err.println(e.toString());
         }

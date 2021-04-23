@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/author")
 public class AuthorController {
@@ -29,11 +31,14 @@ public class AuthorController {
      *
      * */
     @GetMapping("/modules")
-    public ResponseEntity<?> getAllModules(KeycloakPrincipal<KeycloakSecurityContext> principal) {
+    public ResponseEntity<List<Module>> getAllModules(KeycloakPrincipal<KeycloakSecurityContext> principal) {
 //        TODO: write logic here.
         String authorId = principal.getKeycloakSecurityContext().getToken().getSubject();
-
-        return new ResponseEntity<>("", HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(moduleService.getAllModulesByAuthorId(authorId), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     /*
