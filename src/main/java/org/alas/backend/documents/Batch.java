@@ -3,7 +3,7 @@ package org.alas.backend.documents;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -13,8 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class Batch {
-    @Indexed(unique = true)
-    private String batchId;
+    @Id
+    private String Id;
     private String batchName;
     private String batchDescription;
     private List<String> candidateList;

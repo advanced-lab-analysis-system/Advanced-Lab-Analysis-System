@@ -15,19 +15,47 @@ public class BatchService {
         this.batchRepository = batchRepository;
     }
 
-    public boolean createBatch(Batch batch) {
+    public void createBatch(Batch batch) {
         try {
             batchRepository.save(batch);
-            return true;
         } catch (Exception e) {
             System.err.println(e.toString());
         }
-        return false;
     }
 
     public List<Batch> getAllBatches() {
         try {
             return batchRepository.findAll();
+        } catch (Exception e) {
+            System.err.println(e.toString());
+        }
+        return null;
+    }
+
+    /*
+     *
+     * TODO: change logic to update based on changed values instead of whole document being upserted
+     * */
+    public void updateBatch(String batchId, Batch batch) {
+        try {
+            batchRepository.save(batch);
+        } catch (Exception e) {
+            System.err.println(e.toString());
+        }
+    }
+
+    public void deleteBatch(String batchId) {
+        try {
+            batchRepository.deleteById(batchId);
+        } catch (Exception e) {
+            System.err.println(e.toString());
+        }
+    }
+
+    public Batch getBatchById(String batchId) {
+        try {
+            if (batchRepository.findById(batchId).isPresent())
+                return batchRepository.findById(batchId).get();
         } catch (Exception e) {
             System.err.println(e.toString());
         }
