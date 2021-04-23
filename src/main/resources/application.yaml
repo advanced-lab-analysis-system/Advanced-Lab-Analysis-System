@@ -41,3 +41,6 @@ keycloak:
 logging:
   level:
     org.keycloak: TRACE
+
+
+
