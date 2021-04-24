@@ -24,4 +24,8 @@ public class Module {
     //    TODO: change it so each author will have the rights associated with him/her
     private Map<String, String> authorList;
     private List<String> examList;
+
+    public void addNewExam(String examId){
+        this.examList.add(examId);
+    }
 }

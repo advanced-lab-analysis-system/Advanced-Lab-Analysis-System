@@ -48,4 +48,32 @@ public class ModuleService {
         }
         return null;
     }
+
+    public void updateModuleById(String moduleId, Module module) {
+        try {
+            moduleRepository.save(module);
+        } catch (Exception e) {
+            System.err.println(e.toString());
+        }
+    }
+
+    public void deleteModuleById(String moduleId) {
+        try {
+            moduleRepository.deleteById(moduleId);
+        } catch (Exception e) {
+            System.err.println(e.toString());
+        }
+    }
+
+    public List<String> getAllExamsByModuleId(String moduleId) {
+        try {
+            if (moduleRepository.findById(moduleId).isPresent()) {
+                Module module = moduleRepository.findById(moduleId).get();
+                return module.getExamList();
+            }
+        } catch (Exception e) {
+            System.err.println(e.toString());
+        }
+        return null;
+    }
 }

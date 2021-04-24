@@ -3,7 +3,7 @@ package org.alas.backend.documents;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -17,8 +17,8 @@ import java.util.Map;
 @Data
 public class Exam {
 
-    @Indexed(unique = true)
-    private String examId;
+    @Id
+    private String Id;
     private String examName;
     private int noOfQuestions;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)

@@ -2,6 +2,7 @@ package org.alas.backend.controllers;
 
 import org.alas.backend.documents.Exam;
 import org.alas.backend.documents.Module;
+import org.alas.backend.services.ExamService;
 import org.alas.backend.services.ModuleService;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
@@ -16,9 +17,11 @@ import java.util.List;
 public class AuthorController {
 
     private final ModuleService moduleService;
+    private final ExamService examService;
 
-    public AuthorController(ModuleService moduleService) {
+    public AuthorController(ModuleService moduleService, ExamService examService) {
         this.moduleService = moduleService;
+        this.examService = examService;
     }
 
     /*
@@ -86,7 +89,7 @@ public class AuthorController {
 
     /*
      *
-     * TODO: Update given module's data
+     * Updates given module's data
      *  input:
      *   moduleId: Id of the required Module
      *   moduleData: Data object containing changed information(only changed information)
@@ -96,14 +99,20 @@ public class AuthorController {
      *
      * */
     @PutMapping("/module/{moduleId}")
-    public ResponseEntity<?> updateModuleData(@PathVariable String moduleId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
+    public ResponseEntity<?> updateModuleData(@PathVariable String moduleId, @RequestBody Module module, KeycloakPrincipal<KeycloakSecurityContext> principal) {
 //        TODO: write logic here
-        return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            moduleService.updateModuleById(moduleId, module);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            System.err.println(e.toString());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     /*
      *
-     * TODO: delete the given module
+     * delete the given module
      *  input:
      *   moduleId: id of the required module
      *   authorId: id of the author making the request
@@ -115,30 +124,51 @@ public class AuthorController {
     @DeleteMapping("/module/{moduleId}")
     public ResponseEntity<?> deleteModule(@PathVariable String moduleId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
 //        TODO: Write logic here
-        return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            moduleService.deleteModuleById(moduleId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            System.err.println(e.toString());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @GetMapping("/exams")
-    public ResponseEntity<?> getAllAuthorExams(@RequestParam String authorId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
-        return new ResponseEntity<>("", HttpStatus.OK);
+    @GetMapping("/module/{moduleId}/exams")
+    public ResponseEntity<?> getAllAuthorExams(@PathVariable String moduleId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
+        try {
+            return new ResponseEntity<>(moduleService.getAllExamsByModuleId(moduleId), HttpStatus.OK);
+        } catch (Exception e) {
+            System.err.println(e.toString());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     /*
      * Create a new Exam
      * */
-    @PostMapping("/exams")
-    public ResponseEntity<String> createExam(@RequestBody Exam exam, KeycloakPrincipal<KeycloakSecurityContext> principal) {
-
-        return new ResponseEntity<>("Exam Created", HttpStatus.CREATED);
+    @PostMapping("/module/{moduleId}/exams")
+    public ResponseEntity<String> createExam(@RequestBody Exam exam, @PathVariable String moduleId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
+        try {
+            String authorId = principal.getKeycloakSecurityContext().getToken().getSubject();
+            examService.createNewExamInModule(moduleId, principal, exam);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     /*
      *
-     * TODO: Review function and refactor
+     * @return
+     *  Exam Object by given examId
      * */
     @GetMapping("/exams/{examId}")
     public ResponseEntity<?> getExamWithAnswersById(@PathVariable String examId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
-        return new ResponseEntity<>("", HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(examService.getExamByExamId(examId), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     /*
@@ -153,9 +183,14 @@ public class AuthorController {
      *   else: error
      * */
     @PutMapping("/exam/{examId}")
-    public ResponseEntity<?> updateExamByExamId(@PathVariable String examId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
+    public ResponseEntity<?> updateExamByExamId(@PathVariable String examId, @RequestBody Exam exam, KeycloakPrincipal<KeycloakSecurityContext> principal) {
 //        TODO: Write logic here
-        return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            examService.updateExamByExamId(examId, exam);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     /*
