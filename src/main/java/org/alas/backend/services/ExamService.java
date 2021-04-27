@@ -32,7 +32,7 @@ public class ExamService {
                 throw new Exception("No Module found");
             }
         } catch (Exception e) {
-            System.err.println(e.toString());
+            e.printStackTrace();
         }
     }
 
@@ -41,7 +41,7 @@ public class ExamService {
             if (examRepository.findById(examId).isPresent())
                 return examRepository.findById(examId).get();
         } catch (Exception e) {
-            System.err.println(e.toString());
+            e.printStackTrace();
         }
         return null;
     }
@@ -50,7 +50,19 @@ public class ExamService {
         try {
             examRepository.save(exam);
         } catch (Exception e) {
-            System.err.println(e.toString());
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteExamByExamId(String examId, String moduleId) {
+        try {
+            if (moduleRepository.findById(moduleId).isPresent() && examRepository.findById(examId).isPresent()) {
+                Module module = moduleRepository.findById(moduleId).get();
+                module.deleteExam(examId);
+                examRepository.deleteById(examId);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

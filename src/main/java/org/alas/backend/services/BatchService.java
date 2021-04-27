@@ -19,7 +19,7 @@ public class BatchService {
         try {
             batchRepository.save(batch);
         } catch (Exception e) {
-            System.err.println(e.toString());
+            e.printStackTrace();
         }
     }
 
@@ -27,7 +27,7 @@ public class BatchService {
         try {
             return batchRepository.findAll();
         } catch (Exception e) {
-            System.err.println(e.toString());
+            e.printStackTrace();
         }
         return null;
     }
@@ -40,7 +40,7 @@ public class BatchService {
         try {
             batchRepository.save(batch);
         } catch (Exception e) {
-            System.err.println(e.toString());
+            e.printStackTrace();
         }
     }
 
@@ -48,7 +48,7 @@ public class BatchService {
         try {
             batchRepository.deleteById(batchId);
         } catch (Exception e) {
-            System.err.println(e.toString());
+            e.printStackTrace();
         }
     }
 
@@ -57,7 +57,7 @@ public class BatchService {
             if (batchRepository.findById(batchId).isPresent())
                 return batchRepository.findById(batchId).get();
         } catch (Exception e) {
-            System.err.println(e.toString());
+            e.printStackTrace();
         }
         return null;
     }

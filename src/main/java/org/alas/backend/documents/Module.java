@@ -25,7 +25,11 @@ public class Module {
     private Map<String, String> authorList;
     private List<String> examList;
 
-    public void addNewExam(String examId){
+    public void addNewExam(String examId) {
         this.examList.add(examId);
+    }
+
+    public void deleteExam(String examId) {
+        this.examList.remove(new String(examId));
     }
 }

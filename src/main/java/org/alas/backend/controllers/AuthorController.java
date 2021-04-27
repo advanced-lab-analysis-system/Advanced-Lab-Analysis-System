@@ -195,22 +195,28 @@ public class AuthorController {
 
     /*
      *
-     * TODO: Delete exam using given examId
+     * Delete exam using given examId
      *  input:
      *   examId: id of the required exam
+     *   moduleId: id of the module associated for the exam
      *  output:
      *   if(deleted properly): 200 OK
      *   else: error
      * */
-    @DeleteMapping("/exam/{examId}")
-    public ResponseEntity<?> deleteExamByExamId(@PathVariable String examId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
+    @DeleteMapping("module/{moduleId}/exam/{examId}")
+    public ResponseEntity<?> deleteExamByExamId(@PathVariable String examId, @PathVariable String moduleId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
 //        TODO: Write logic here
-        return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            examService.deleteExamByExamId(examId, moduleId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     /*
      *
-     * end the exam prematurely
+     * TODO: Send a signal in all connected WebSockets to stop the exam(in theory)
      * */
     @GetMapping("/exams/{examId}/end")
     public ResponseEntity<String> endExam(@PathVariable String examId) {
