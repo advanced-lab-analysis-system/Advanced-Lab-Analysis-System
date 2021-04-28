@@ -3,6 +3,7 @@ package org.alas.backend.documents;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.alas.backend.dataobjects.exam.question.Question;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -26,9 +27,12 @@ public class Exam {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime examEndTime;
     private String authorId;
-    //    TODO: Change to Question type
-    private List<String> questionList;
+    private List<Question> questionList;
 
-    //Here String(Key) is candidateId and Object is his/her submission for this exam
+    /*
+     * 1st Key -> candidateId
+     * 2nd Key -> questionId
+     * Object -> submission for questionId
+     * */
     private Map<String, Map<String, Object>> submissions;
 }

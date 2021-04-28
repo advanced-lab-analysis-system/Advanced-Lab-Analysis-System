@@ -1,5 +1,6 @@
 package org.alas.backend.controllers;
 
+import org.alas.backend.dataobjects.exam.ExamSummary;
 import org.alas.backend.services.ExamService;
 import org.alas.backend.services.ModuleService;
 import org.keycloak.KeycloakPrincipal;
@@ -46,6 +47,31 @@ public class CandidateController {
             return new ResponseEntity<>(moduleService.getModuleForCandidate(moduleId, candidateId), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+        }
+    }
+
+    /*
+     *
+     * Return Exam Data for Candidate
+     * */
+
+    @GetMapping("/exam/{examId}")
+    public ResponseEntity<?> getExam(@PathVariable String examId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
+
+    }
+
+
+    /*
+     *
+     * @return
+     *   ExamSummary
+     * */
+    @GetMapping("/exam/{examId}/summary")
+    public ResponseEntity<ExamSummary> getExamSummary(@PathVariable String examId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
+        try {
+            return new ResponseEntity<>(examService.getExamSummary(examId), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 }

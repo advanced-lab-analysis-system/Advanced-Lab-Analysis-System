@@ -1,5 +1,8 @@
 package org.alas.backend.services;
 
+import org.alas.backend.dataobjects.exam.ExamSummary;
+import org.alas.backend.dataobjects.exam.question.Question;
+import org.alas.backend.dataobjects.exam.question.mcq.MCQQuestion;
 import org.alas.backend.documents.Exam;
 import org.alas.backend.documents.Module;
 import org.alas.backend.repositories.ExamRepository;
@@ -7,6 +10,9 @@ import org.alas.backend.repositories.ModuleRepository;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ExamService {
@@ -21,10 +27,10 @@ public class ExamService {
 
     public void createNewExamInModule(String moduleId, KeycloakPrincipal<KeycloakSecurityContext> principal, Exam exam) {
         try {
-            String authorId = principal.getKeycloakSecurityContext().getToken().getSubject();
-            exam.setAuthorId(authorId);
-            Exam newExam = examRepository.save(exam);
             if (moduleRepository.findById(moduleId).isPresent()) {
+                String authorId = principal.getKeycloakSecurityContext().getToken().getSubject();
+                exam.setAuthorId(authorId);
+                Exam newExam = examRepository.save(exam);
                 Module module = moduleRepository.findById(moduleId).get();
                 module.addNewExam(newExam.getId());
                 moduleRepository.save(module);
@@ -45,6 +51,41 @@ public class ExamService {
         }
         return null;
     }
+
+    public Exam getExamWithoutAnswers(String examId) {
+        try {
+            if(examRepository.findById(examId).isPresent()) {
+                Exam exam = examRepository.findById(examId).get();
+                List<Question> questionList = exam.getQuestionList();
+                List<Question> newQuestionList = new ArrayList<>();
+                questionList.forEach(question -> {
+                    switch (question.getQuestionType()) {
+                        case "mcq":
+                            newQuestionList.add(new MCQQuestion(question));
+                            break;
+                        case "coding":
+                    }
+                });
+                exam.setQuestionList(newQuestionList);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public ExamSummary getExamSummary(String examId) {
+        try {
+            if (examRepository.findById(examId).isPresent()) {
+                Exam exam = examRepository.findById(examId).get();
+                return new ExamSummary(exam);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     public void updateExamByExamId(String examId, Exam exam) {
         try {
