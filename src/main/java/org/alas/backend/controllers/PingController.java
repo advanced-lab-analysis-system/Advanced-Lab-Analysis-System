@@ -1,16 +1,17 @@
 package org.alas.backend.controllers;
 
-import org.springframework.http.HttpStatus;
+import org.keycloak.KeycloakPrincipal;
+import org.keycloak.KeycloakSecurityContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
 public class PingController {
-
-    @GetMapping(value = "/ping")
-    public ResponseEntity<?> ping() {
-        return new ResponseEntity<>("Server Alive", HttpStatus.OK);
+    @GetMapping("/ping")
+    public ResponseEntity<String> ping(KeycloakPrincipal<KeycloakSecurityContext> principal) {
+        String temp = principal.getKeycloakSecurityContext().getToken().getSubject();
+        return ResponseEntity.ok(temp);
+//        return ResponseEntity.ok("Server Alive");
     }
 }

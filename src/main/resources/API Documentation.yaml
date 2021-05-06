@@ -1,9 +1,0 @@
-openapi: 3.0.3
-info:
-  title: ALAS Backend API
-  description: ALAS Backend API
-  version: 1.0.0
-servers:
-  - url: 'https'
-paths:
-  

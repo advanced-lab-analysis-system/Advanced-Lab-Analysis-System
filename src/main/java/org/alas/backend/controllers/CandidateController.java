@@ -1,79 +1,81 @@
 package org.alas.backend.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.alas.backend.dataobjects.*;
-import org.alas.backend.dataobjects.dto.CodeDTO;
-import org.alas.backend.dataobjects.dto.ExamDTO;
-import org.alas.backend.dataobjects.dto.JudgeRequestDTO;
-import org.alas.backend.dataobjects.dto.VisitDTO;
-import org.alas.backend.handlers.ExamHandler;
-import org.alas.backend.handlers.JudgeHandler;
-import org.alas.backend.handlers.SubmissionHandler;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.alas.backend.dataobjects.exam.ExamSummary;
+import org.alas.backend.services.ExamService;
+import org.alas.backend.services.ModuleService;
+import org.keycloak.KeycloakPrincipal;
+import org.keycloak.KeycloakSecurityContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.time.Duration;
+import java.util.List;
 
 @RestController
 @RequestMapping("/candidate")
 public class CandidateController {
-    @Autowired
-    private ExamHandler examHandler;
 
-    @Autowired
-    private SubmissionHandler submissionHandler;
+    private final ModuleService moduleService;
+    private final ExamService examService;
 
-    @Autowired
-    private JudgeHandler judgeHandler;
-
-    @GetMapping("/exams/{examId}/submit")
-    public ResponseEntity<String> submitExam(@PathVariable String examId, @RequestParam String candidateId) {
-        submissionHandler.submitExam(examId, candidateId);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public CandidateController(ModuleService moduleService, ExamService examService) {
+        this.moduleService = moduleService;
+        this.examService = examService;
     }
 
-    @GetMapping("/exams")
-    public ResponseEntity<Flux<ExamDTO>> getAllExams(@RequestParam String candidateId) {
-        Flux<ExamDTO> examFlux = examHandler.getAllExams(candidateId);
-        return new ResponseEntity<>(examFlux, HttpStatus.OK);
+    /*
+     * Return all modules associated with the batches the candidate is present in.
+     * */
+    @GetMapping("/modules")
+    public ResponseEntity<?> getAllModulesForCandidate(KeycloakPrincipal<KeycloakSecurityContext> principal) {
+        try {
+            String candidateId = principal.getKeycloakSecurityContext().getToken().getSubject();
+            List<String> modules = moduleService.getAllModulesByCandidateId(candidateId);
+            return new ResponseEntity<>(modules, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+        }
     }
 
-    @GetMapping("/exams/{examId}")
-    public ResponseEntity<Mono<?>> getExamWithoutAnswersById(@PathVariable String examId, @RequestParam String candidateId) {
-        Mono<?> examDataDTOMono = examHandler.getExamWithoutAnswers(examId, candidateId);
-        return new ResponseEntity<>(examDataDTOMono, HttpStatus.OK);
+    @GetMapping("/module/{moduleId}")
+    public ResponseEntity<?> getModuleData(@PathVariable String moduleId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
+        try {
+            String candidateId = principal.getKeycloakSecurityContext().getToken().getSubject();
+            return new ResponseEntity<>(moduleService.getModuleForCandidate(moduleId, candidateId), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+        }
     }
 
-    @PostMapping("/submission")
-    public ResponseEntity<?> newSubmission(@RequestParam String examId, @RequestParam String candidateId,
-                                           @RequestParam String questionType, @RequestBody String visit) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        switch (questionType) {
-            case "mcq":
-                VisitDTO visitDTO = objectMapper.readValue(visit, VisitDTO.class);
-                System.out.println(visitDTO);
-                Mono<?> responseMono = submissionHandler.addVisit(examId, candidateId, visitDTO);
-                return new ResponseEntity<>(responseMono, HttpStatus.CREATED);
-            case "coding":
-                CodeDTO codeDTO = objectMapper.readValue(visit, CodeDTO.class);
-                JudgeRequestDTO judgeRequestDTO = new JudgeRequestDTO(codeDTO.getLanguage_id(), codeDTO.getCode(), codeDTO.getStdin(), codeDTO.getExpectedOutput());
-                Mono<GetSubmissionResponse> responseMono1 = judgeHandler.createSubmission(judgeRequestDTO)
-                        .delayElement(Duration.ofMillis(5000))
-                        .flatMap(creationResponse -> judgeHandler.getSubmission(creationResponse.getToken()));
+    /*
+     *
+     * Return Exam Data for Candidate
+     * */
 
-                if (codeDTO.getSubmit())
-                    responseMono1.subscribe(getSubmissionResponse ->
-                            submissionHandler.addCodeSubmission(examId, candidateId, codeDTO.getQuestionId(), getSubmissionResponse)
-                                    .subscribe());
-                return new ResponseEntity<>(responseMono1, HttpStatus.CREATED);
+    @GetMapping("/exam/{examId}")
+    public ResponseEntity<?> getExam(@PathVariable String examId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
+        try {
+            return new ResponseEntity<>(examService.getExamWithoutAnswers(examId), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 
-            default:
-                throw new IllegalStateException("Unexpected value: " + questionType);
+
+    /*
+     *
+     * @return
+     *   ExamSummary
+     * */
+    @GetMapping("/exam/{examId}/summary")
+    public ResponseEntity<ExamSummary> getExamSummary(@PathVariable String examId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
+        try {
+            return new ResponseEntity<>(examService.getExamSummary(examId), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 }

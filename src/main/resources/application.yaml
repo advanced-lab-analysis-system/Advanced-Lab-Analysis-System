@@ -1,0 +1,46 @@
+spring:
+  data:
+    mongodb:
+      database: test
+      uri: mongodb+srv://pythxnbite:Ucantcmee6960@alas-dev.eenwz.mongodb.net/test?retryWrites=true&w=majority
+      auto-index-creation: true
+
+spark:
+  app:
+    name: "ALAS Exam Performance Analyser"
+  master: local[1]
+
+server:
+  port: 9000
+
+keycloak:
+  auth-server-url: http://localhost:8080/auth
+  realm: test
+  resource: spring-boot-client
+  credentials:
+    secret: 41e7abe2-35a4-46c0-ba68-40dd16080b1a
+  bearer-only: true
+  public-client: true
+  securityConstraints:
+    - authRoles:
+        - AUTHOR
+        - ADMIN
+      securityCollections:
+        - name: Author
+          patterns:
+            - /author/*
+    - authRoles:
+        - CANDIDATE
+        - AUTHOR
+        - ADMIN
+      securityCollections:
+        - name: ping
+          patterns:
+            - /ping
+
+logging:
+  level:
+    org.keycloak: TRACE
+
+
+
