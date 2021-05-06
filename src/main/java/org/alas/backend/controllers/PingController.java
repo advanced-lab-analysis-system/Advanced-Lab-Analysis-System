@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class PingController {
     @GetMapping("/ping")
     public ResponseEntity<String> ping(KeycloakPrincipal<KeycloakSecurityContext> principal) {
-//        String temp = principal.getKeycloakSecurityContext().getToken().getSubject();
-//        return ResponseEntity.ok(temp);
-        return ResponseEntity.ok("Server Alive");
+        String temp = principal.getKeycloakSecurityContext().getToken().getSubject();
+        return ResponseEntity.ok(temp);
+//        return ResponseEntity.ok("Server Alive");
     }
 }

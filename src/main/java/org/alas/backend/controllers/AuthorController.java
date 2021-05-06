@@ -35,8 +35,8 @@ public class AuthorController {
      * */
     @GetMapping("/modules")
     public ResponseEntity<List<Module>> getAllModules(KeycloakPrincipal<KeycloakSecurityContext> principal) {
-        String authorId = principal.getKeycloakSecurityContext().getToken().getSubject();
         try {
+            String authorId = principal.getKeycloakSecurityContext().getToken().getSubject();
             return new ResponseEntity<>(moduleService.getAllModulesByAuthorId(authorId), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -58,9 +58,9 @@ public class AuthorController {
      *
      * */
     @PostMapping("/modules")
-    public ResponseEntity<?> createNewModule(KeycloakPrincipal<KeycloakSecurityContext> principal, Module module) {
-        String authorId = principal.getKeycloakSecurityContext().getToken().getSubject();
+    public ResponseEntity<?> createNewModule(KeycloakPrincipal<KeycloakSecurityContext> principal, @RequestBody Module module) {
         try {
+            String authorId = principal.getKeycloakSecurityContext().getToken().getSubject();
             module.setOriginalAuthor(authorId);
             moduleService.createModule(module);
             return new ResponseEntity<>(HttpStatus.OK);

@@ -2,6 +2,7 @@ package org.alas.backend.services;
 
 import org.alas.backend.dataobjects.exam.ExamSummary;
 import org.alas.backend.dataobjects.exam.question.Question;
+import org.alas.backend.dataobjects.exam.question.coding.CodingQuestion;
 import org.alas.backend.dataobjects.exam.question.mcq.MCQQuestion;
 import org.alas.backend.documents.Exam;
 import org.alas.backend.documents.Module;
@@ -12,6 +13,7 @@ import org.keycloak.KeycloakSecurityContext;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -54,19 +56,24 @@ public class ExamService {
 
     public Exam getExamWithoutAnswers(String examId) {
         try {
-            if(examRepository.findById(examId).isPresent()) {
+            if (examRepository.findById(examId).isPresent()) {
                 Exam exam = examRepository.findById(examId).get();
-                List<Question> questionList = exam.getQuestionList();
+                List<Object> questionList = exam.getQuestionList();
                 List<Question> newQuestionList = new ArrayList<>();
                 questionList.forEach(question -> {
-                    switch (question.getQuestionType()) {
+                    Question currQuestion = (Question) question;
+                    switch (currQuestion.getQuestionType()) {
                         case "mcq":
-                            newQuestionList.add(new MCQQuestion(question));
+                            newQuestionList.add((MCQQuestion) question);
                             break;
                         case "coding":
+                            newQuestionList.add((CodingQuestion) question);
+                            break;
+                        default:
+                            break;
                     }
                 });
-                exam.setQuestionList(newQuestionList);
+                exam.setQuestionList(Collections.singletonList(newQuestionList));
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -3,7 +3,6 @@ package org.alas.backend.documents;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.alas.backend.dataobjects.exam.question.Question;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -27,7 +26,7 @@ public class Exam {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime examEndTime;
     private String authorId;
-    private List<Question> questionList;
+    private List<Object> questionList;
 
     /*
      * 1st Key -> candidateId

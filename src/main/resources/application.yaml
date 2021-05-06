@@ -23,6 +23,13 @@ keycloak:
   public-client: true
   securityConstraints:
     - authRoles:
+        - AUTHOR
+        - ADMIN
+      securityCollections:
+        - name: Author
+          patterns:
+            - /author/*
+    - authRoles:
         - CANDIDATE
         - AUTHOR
         - ADMIN
@@ -30,13 +37,6 @@ keycloak:
         - name: ping
           patterns:
             - /ping
-    - authRoles:
-        - AUTHOR
-        - ADMINN
-      securityCollections:
-        - name: Author
-          patterns:
-            - /author
 
 logging:
   level:

@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface ModuleRepository extends MongoRepository<Module, String> {
 
-    @Query("{$or: [ { 'originalAuthor': { $eq: ?0 } }, { 'authorList.?1': { $exists: true } } ]}")
+    @Query("{$or: [ { 'originalAuthor': { $eq: ?0 } }, { 'authorList.?0': { $exists: true } } ]}")
     List<Module> findAllByAuthorId(String authorId);
 }

@@ -15,4 +15,9 @@ import java.util.List;
 @NoArgsConstructor
 public class MCQQuestion extends Question {
     private List<String> options;
+
+    public MCQQuestion(String questionId, String questionType, String statement, List<String> options) {
+        super(questionId, questionType, statement);
+        this.options = options;
+    }
 }

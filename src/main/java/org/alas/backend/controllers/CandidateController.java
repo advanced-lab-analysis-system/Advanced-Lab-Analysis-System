@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/author")
+@RequestMapping("/candidate")
 public class CandidateController {
 
     private final ModuleService moduleService;
@@ -57,7 +57,11 @@ public class CandidateController {
 
     @GetMapping("/exam/{examId}")
     public ResponseEntity<?> getExam(@PathVariable String examId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
-
+        try {
+            return new ResponseEntity<>(examService.getExamWithoutAnswers(examId), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
 
