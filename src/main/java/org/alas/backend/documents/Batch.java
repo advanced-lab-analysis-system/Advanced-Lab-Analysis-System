@@ -20,4 +20,5 @@ public class Batch {
     private List<String> candidateList;
     private List<String> moduleList;
     private String status;
+
 }

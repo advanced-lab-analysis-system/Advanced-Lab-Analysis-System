@@ -4,6 +4,7 @@ import org.alas.backend.dataobjects.exam.ExamSummary;
 import org.alas.backend.dataobjects.exam.question.Question;
 import org.alas.backend.dataobjects.exam.question.coding.CodingQuestion;
 import org.alas.backend.dataobjects.exam.question.mcq.MCQQuestion;
+import org.alas.backend.documents.Batch;
 import org.alas.backend.documents.Exam;
 import org.alas.backend.documents.Module;
 import org.alas.backend.repositories.ExamRepository;
@@ -12,28 +13,29 @@ import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ExamService {
 
     private final ModuleRepository moduleRepository;
     private final ExamRepository examRepository;
+    private final BatchService batchService;
 
-    public ExamService(ModuleRepository moduleRepository, ExamRepository examRepository) {
+    public ExamService(ModuleRepository moduleRepository, ExamRepository examRepository, BatchService batchService) {
         this.moduleRepository = moduleRepository;
         this.examRepository = examRepository;
+        this.batchService = batchService;
     }
 
     public void createNewExamInModule(String moduleId, KeycloakPrincipal<KeycloakSecurityContext> principal, Exam exam) {
         try {
             if (moduleRepository.findById(moduleId).isPresent()) {
                 String authorId = principal.getKeycloakSecurityContext().getToken().getSubject();
+                Module module = moduleRepository.findById(moduleId).get();
+                exam.setSubmissions(populateDefaultSubmissions(module.getBatchList()));
                 exam.setAuthorId(authorId);
                 Exam newExam = examRepository.save(exam);
-                Module module = moduleRepository.findById(moduleId).get();
                 module.addNewExam(newExam.getId());
                 moduleRepository.save(module);
             } else {
@@ -42,6 +44,21 @@ public class ExamService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public Map<String, Map<String,Map<String, Object>>> populateDefaultSubmissions(List<String> batchList){
+        Map<String, Map<String, Map<String, Object>>> defaultSubmissionsMap = new HashMap<>();
+        for(String batchId: batchList){
+            Batch batch = batchService.getBatchById(batchId);
+            if(batch != null){
+                List<String> candidateList = batch.getCandidateList();
+                Map<String, Map<String, Object>> candidateMap = new HashMap<>();
+                for(String candidateId: candidateList)
+                    candidateMap.put(candidateId, new HashMap<>());
+                defaultSubmissionsMap.put(batchId,candidateMap);
+            }
+        }
+        return defaultSubmissionsMap;
     }
 
     public Exam getExamByExamId(String examId) {

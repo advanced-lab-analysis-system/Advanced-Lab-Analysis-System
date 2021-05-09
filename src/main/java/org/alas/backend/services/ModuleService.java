@@ -108,4 +108,27 @@ public class ModuleService {
         }
         return null;
     }
+
+    public List<Module> updateModulesWithNewBatch(Batch batch) {
+        List<Module> moduleList = new ArrayList<>();
+        try {
+            for (String moduleId : batch.getModuleList()) {
+                System.out.println("Module Name: " + moduleId);
+                if(moduleRepository.findById(moduleId).isPresent()) {
+                    Module module = moduleRepository.findById(moduleId).get();
+                    List<String> batchList = module.getBatchList();
+                    batchList.add(batch.getId());
+                    module.setBatchList(batchList);
+                    moduleRepository.save(module);
+                    moduleList.add(module);
+                    System.out.println(module);
+                }
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        System.out.println(moduleList.toString());
+        return moduleList;
+    }
 }

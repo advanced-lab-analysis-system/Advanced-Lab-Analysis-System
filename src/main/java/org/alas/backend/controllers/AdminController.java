@@ -2,6 +2,7 @@ package org.alas.backend.controllers;
 
 
 import org.alas.backend.documents.Batch;
+import org.alas.backend.documents.Module;
 import org.alas.backend.services.BatchService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,10 +29,9 @@ public class AdminController {
     }
 
     @PostMapping("/batches")
-    public ResponseEntity<String> createNewBatch(@RequestBody Batch batch) {
+    public ResponseEntity<List<Module>> createNewBatch(@RequestBody Batch batch) {
         try {
-            batchService.createBatch(batch);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(batchService.createBatch(batch), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

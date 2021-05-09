@@ -1,26 +1,34 @@
 package org.alas.backend.services;
 
 import org.alas.backend.documents.Batch;
+import org.alas.backend.documents.Module;
 import org.alas.backend.repositories.BatchRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class BatchService {
 
     private final BatchRepository batchRepository;
+    private final ModuleService moduleService;
 
-    public BatchService(BatchRepository batchRepository) {
+    public BatchService(BatchRepository batchRepository, ModuleService moduleService) {
         this.batchRepository = batchRepository;
+        this.moduleService = moduleService;
     }
 
-    public void createBatch(Batch batch) {
+    public List<Module> createBatch(Batch batch) {
+        List<Module> moduleList = new ArrayList<>();
         try {
-            batchRepository.save(batch);
+            Batch newBatch = batchRepository.save(batch);
+            System.out.println(newBatch.toString());
+            moduleList = moduleService.updateModulesWithNewBatch(newBatch);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return moduleList;
     }
 
     public List<Batch> getAllBatches() {

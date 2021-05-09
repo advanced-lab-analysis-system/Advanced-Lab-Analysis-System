@@ -29,9 +29,10 @@ public class Exam {
     private List<Object> questionList;
 
     /*
-     * 1st Key -> candidateId
-     * 2nd Key -> questionId
+     * 1st Key -> batchId
+     * 2nd Key -> candidateId
+     * 3rd key -> questionId
      * Object -> submission for questionId
      * */
-    private Map<String, Map<String, Object>> submissions;
+    private Map<String, Map<String, Map<String, Object>>> submissions;
 }
