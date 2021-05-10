@@ -91,6 +91,7 @@ public class ExamService {
                     }
                 });
                 exam.setQuestionList(Collections.singletonList(newQuestionList));
+                return exam;
             }
         } catch (Exception e) {
             e.printStackTrace();
