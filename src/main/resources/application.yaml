@@ -30,6 +30,13 @@ keycloak:
           patterns:
             - /author/*
     - authRoles:
+        - AUTHOR
+        - CANDIDATE
+      securityCollections:
+        - name: Candidate
+          patterns:
+            - /candidate/*
+    - authRoles:
         - CANDIDATE
         - AUTHOR
         - ADMIN
