@@ -14,11 +14,14 @@ import java.util.List;
 @Data
 public class Batch {
     @Id
-    private String Id;
+    private String id;
     private String batchName;
     private String batchDescription;
     private List<String> candidateList;
     private List<String> moduleList;
     private String status;
 
+    public void addNewModule(String moduleId){this.moduleList.add(moduleId);}
+
+    public void deleteModule(String moduleId){this.moduleList.remove(moduleId);}
 }

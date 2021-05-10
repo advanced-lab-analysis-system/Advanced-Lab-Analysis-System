@@ -32,6 +32,6 @@ public class Module {
     }
 
     public void deleteExam(String examId) {
-        this.examList.remove(new String(examId));
+        this.examList.remove(examId);
     }
 }

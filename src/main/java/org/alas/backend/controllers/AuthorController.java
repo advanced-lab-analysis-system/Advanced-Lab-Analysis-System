@@ -1,5 +1,6 @@
 package org.alas.backend.controllers;
 
+import org.alas.backend.documents.Batch;
 import org.alas.backend.documents.Exam;
 import org.alas.backend.documents.Module;
 import org.alas.backend.services.ExamService;
@@ -58,12 +59,11 @@ public class AuthorController {
      *
      * */
     @PostMapping("/modules")
-    public ResponseEntity<?> createNewModule(KeycloakPrincipal<KeycloakSecurityContext> principal, @RequestBody Module module) {
+    public ResponseEntity<List<Batch>> createNewModule(KeycloakPrincipal<KeycloakSecurityContext> principal, @RequestBody Module module) {
         try {
             String authorId = principal.getKeycloakSecurityContext().getToken().getSubject();
             module.setOriginalAuthor(authorId);
-            moduleService.createModule(module);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(moduleService.createModule(module), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
