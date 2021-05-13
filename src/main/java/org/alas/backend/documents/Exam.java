@@ -18,7 +18,7 @@ import java.util.Map;
 public class Exam {
 
     @Id
-    private String Id;
+    private String id;
     private String examName;
     private int noOfQuestions;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
