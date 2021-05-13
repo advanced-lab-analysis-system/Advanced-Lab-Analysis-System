@@ -23,12 +23,25 @@ public class ModuleService {
         this.batchRepository = batchRepository;
     }
 
-    public void createModule(Module module) {
+    public List<Batch> createModule(Module module) {
         try {
-            moduleRepository.save(module);
+            List<Batch> updatedBatchList = new ArrayList<>();
+            Module newModule = moduleRepository.save(module);
+            System.out.println(newModule);
+            List<String> batchList = newModule.getBatchList();
+            for(String batchId: batchList){
+                if(batchRepository.findById(batchId).isPresent()){
+                    Batch batch = batchRepository.findById(batchId).get();
+                    batch.addNewModule(newModule.getId());
+                    System.out.println(batchRepository.save(batch));
+                    updatedBatchList.add(batch);
+                }
+            }
+            return updatedBatchList;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     public Module getModuleForAuthor(String moduleId, String authorId) {
@@ -70,11 +83,11 @@ public class ModuleService {
     public List<String> getAllModulesByCandidateId(String candidateId) {
         try {
             Set<String> modules = new HashSet<>();
-            List<Batch> batches = batchRepository.findAllByCandidateId(candidateId);
+            List<Batch> batches = batchRepository.findAllByCandidateList(candidateId);
             batches.forEach(batch -> {
                 modules.addAll(batch.getModuleList());
             });
-            return new ArrayList<String>(modules);
+            return new ArrayList<>(modules);
         } catch (Exception e) {
             e.printStackTrace();
         }
