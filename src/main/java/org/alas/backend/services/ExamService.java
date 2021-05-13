@@ -1,5 +1,6 @@
 package org.alas.backend.services;
 
+import org.alas.backend.dataobjects.exam.ExamCandidate;
 import org.alas.backend.dataobjects.exam.ExamSummary;
 import org.alas.backend.dataobjects.exam.question.Question;
 import org.alas.backend.dataobjects.exam.question.coding.CodingQuestion;
@@ -46,16 +47,16 @@ public class ExamService {
         }
     }
 
-    public Map<String, Map<String,Map<String, Object>>> populateDefaultSubmissions(List<String> batchList){
+    public Map<String, Map<String, Map<String, Object>>> populateDefaultSubmissions(List<String> batchList) {
         Map<String, Map<String, Map<String, Object>>> defaultSubmissionsMap = new HashMap<>();
-        for(String batchId: batchList){
+        for (String batchId : batchList) {
             Batch batch = batchService.getBatchById(batchId);
-            if(batch != null){
+            if (batch != null) {
                 List<String> candidateList = batch.getCandidateList();
                 Map<String, Map<String, Object>> candidateMap = new HashMap<>();
-                for(String candidateId: candidateList)
+                for (String candidateId : candidateList)
                     candidateMap.put(candidateId, new HashMap<>());
-                defaultSubmissionsMap.put(batchId,candidateMap);
+                defaultSubmissionsMap.put(batchId, candidateMap);
             }
         }
         return defaultSubmissionsMap;
@@ -71,11 +72,12 @@ public class ExamService {
         return null;
     }
 
-    public Exam getExamWithoutAnswers(String examId) {
+    public ExamCandidate getExamWithoutAnswers(String examId) {
         try {
             if (examRepository.findById(examId).isPresent()) {
                 Exam exam = examRepository.findById(examId).get();
-                List<Object> questionList = exam.getQuestionList();
+                ExamCandidate examCandidate = new ExamCandidate(exam);
+                List<Object> questionList = examCandidate.getQuestionList();
                 List<Question> newQuestionList = new ArrayList<>();
                 questionList.forEach(question -> {
                     Question currQuestion = (Question) question;
@@ -90,8 +92,8 @@ public class ExamService {
                             break;
                     }
                 });
-                exam.setQuestionList(Collections.singletonList(newQuestionList));
-                return exam;
+                examCandidate.setQuestionList(Collections.singletonList(newQuestionList));
+                return examCandidate;
             }
         } catch (Exception e) {
             e.printStackTrace();
