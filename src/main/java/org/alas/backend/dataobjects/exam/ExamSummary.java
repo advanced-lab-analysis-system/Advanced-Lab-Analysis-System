@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ExamSummary {
 
-    private String Id;
+    private String id;
     private String examName;
     private int noOfQuestions;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -23,7 +23,7 @@ public class ExamSummary {
     private String authorId;
 
     public ExamSummary(Exam exam) {
-        this.Id = exam.getId();
+        this.id = exam.getId();
         this.examName = exam.getExamName();
         this.noOfQuestions = exam.getNoOfQuestions();
         this.examStartTime = exam.getExamStartTime();
