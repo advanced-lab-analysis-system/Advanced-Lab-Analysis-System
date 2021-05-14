@@ -48,7 +48,6 @@ keycloak:
 #  cors-max-age: 0
   cors-allowed-methods: POST, PUT, DELETE, GET
   cors-allowed-headers: X-Requested-With, Content-Type, Authorization, Origin, Accept, Access-Control-Request-Method, Access-Control-Request-Headers
-
 logging:
   level:
     org.keycloak: TRACE

@@ -3,6 +3,7 @@ package org.alas.backend.controllers;
 import org.alas.backend.documents.Batch;
 import org.alas.backend.documents.Exam;
 import org.alas.backend.documents.Module;
+import org.alas.backend.services.BatchService;
 import org.alas.backend.services.ExamService;
 import org.alas.backend.services.ModuleService;
 import org.keycloak.KeycloakPrincipal;
@@ -19,10 +20,27 @@ public class AuthorController {
 
     private final ModuleService moduleService;
     private final ExamService examService;
+    private final BatchService batchService;
 
-    public AuthorController(ModuleService moduleService, ExamService examService) {
+    public AuthorController(ModuleService moduleService, ExamService examService, BatchService batchService) {
         this.moduleService = moduleService;
         this.examService = examService;
+        this.batchService = batchService;
+    }
+
+
+    /*
+     *
+     * Get all batches to select during creation
+     * */
+
+    @GetMapping("/batches")
+    public ResponseEntity<List<Batch>> getAllBatches(KeycloakPrincipal<KeycloakSecurityContext> principal) {
+        try {
+            return new ResponseEntity<>(batchService.getAllBatches(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     /*
