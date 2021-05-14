@@ -79,7 +79,7 @@ public class ExamService {
                 Exam exam = examRepository.findById(examId).get();
                 ExamCandidate examCandidate = new ExamCandidate(exam);
                 List<Object> questionList = examCandidate.getQuestionList();
-                List<Question> newQuestionList = new ArrayList<>();
+                List<Object> newQuestionList = new ArrayList<>();
                 questionList.forEach(question -> {
                     ObjectMapper objectMapper = new ObjectMapper();
                     Question currQuestion = objectMapper.convertValue(question, Question.class);
@@ -94,7 +94,7 @@ public class ExamService {
                             break;
                     }
                 });
-                examCandidate.setQuestionList(Collections.singletonList(newQuestionList));
+                examCandidate.setQuestionList(newQuestionList);
                 return examCandidate;
             }
         } catch (Exception e) {
