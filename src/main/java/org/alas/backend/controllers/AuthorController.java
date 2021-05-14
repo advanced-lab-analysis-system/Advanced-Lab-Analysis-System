@@ -149,7 +149,6 @@ public class AuthorController {
     @PostMapping("/module/{moduleId}/exams")
     public ResponseEntity<String> createExam(@RequestBody Exam exam, @PathVariable String moduleId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
         try {
-            String authorId = principal.getKeycloakSecurityContext().getToken().getSubject();
             examService.createNewExamInModule(moduleId, principal, exam);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception e) {

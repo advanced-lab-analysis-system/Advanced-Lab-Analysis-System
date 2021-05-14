@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MCQQuestionWithAnswer extends MCQQuestion {
-    private String answer;
+    private int answer;
 }

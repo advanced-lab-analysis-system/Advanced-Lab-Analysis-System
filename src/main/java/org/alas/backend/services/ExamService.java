@@ -1,5 +1,6 @@
 package org.alas.backend.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.alas.backend.dataobjects.exam.ExamCandidate;
 import org.alas.backend.dataobjects.exam.ExamSummary;
 import org.alas.backend.dataobjects.exam.question.Question;
@@ -80,13 +81,14 @@ public class ExamService {
                 List<Object> questionList = examCandidate.getQuestionList();
                 List<Question> newQuestionList = new ArrayList<>();
                 questionList.forEach(question -> {
-                    Question currQuestion = (Question) question;
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    Question currQuestion = objectMapper.convertValue(question, Question.class);
                     switch (currQuestion.getQuestionType()) {
                         case "mcq":
-                            newQuestionList.add((MCQQuestion) question);
+                            newQuestionList.add(objectMapper.convertValue(question, MCQQuestion.class));
                             break;
                         case "coding":
-                            newQuestionList.add((CodingQuestion) question);
+                            newQuestionList.add(objectMapper.convertValue(question, CodingQuestion.class));
                             break;
                         default:
                             break;

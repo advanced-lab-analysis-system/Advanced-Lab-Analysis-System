@@ -1,6 +1,7 @@
 package org.alas.backend.dataobjects.exam.question.coding;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,6 +14,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CodingQuestion extends Question {
 
     private List<Language> languagesAccepted;
