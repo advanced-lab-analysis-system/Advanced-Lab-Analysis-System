@@ -118,6 +118,7 @@ public class ExamService {
 
     public void updateExamByExamId(String examId, Exam exam) {
         try {
+            exam.setId(examId);
             examRepository.save(exam);
         } catch (Exception e) {
             e.printStackTrace();

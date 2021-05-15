@@ -96,6 +96,7 @@ public class ModuleService {
 
     public void updateModuleById(String moduleId, Module module) {
         try {
+            module.setId(moduleId);
             moduleRepository.save(module);
         } catch (Exception e) {
             e.printStackTrace();
