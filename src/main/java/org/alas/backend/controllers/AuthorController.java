@@ -194,7 +194,7 @@ public class AuthorController {
      * @return
      *  Exam Object by given examId
      * */
-    @GetMapping("/exams/{examId}")
+    @GetMapping("/exam/{examId}")
     public ResponseEntity<?> getExamWithAnswersById(@PathVariable String examId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
         try {
             return new ResponseEntity<>(examService.getExamByExamId(examId), HttpStatus.OK);
