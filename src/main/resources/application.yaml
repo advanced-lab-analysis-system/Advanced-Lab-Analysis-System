@@ -30,7 +30,7 @@ keycloak:
           patterns:
             - /author/*
     - authRoles:
-        - AUTHOR
+        - ADMIN
         - CANDIDATE
       securityCollections:
         - name: Candidate

@@ -10,9 +10,9 @@ import java.util.List;
 @Repository
 public interface BatchRepository extends MongoRepository<Batch, String> {
 
-//    //    TODO: Review the query to fetch all Batches which have the given candidateId in their candidateList
-//    @Query("{ 'candidateList': ?0 }")
-//    List<Batch> findAllByCandidateId(String CandidateId);
+// TODO: write query to only fetch id and moduleName for author to select while module creation
+//    @Query("({}, {_id:1}).map(function(item){ return item._id; })")
+//    List<String> findAllBatchesId();
 
     List<Batch> findAllByCandidateList(String CandidateId);
 }

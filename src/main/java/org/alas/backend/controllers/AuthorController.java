@@ -1,5 +1,6 @@
 package org.alas.backend.controllers;
 
+import org.alas.backend.dataobjects.exam.ExamSummary;
 import org.alas.backend.documents.Batch;
 import org.alas.backend.documents.Exam;
 import org.alas.backend.documents.Module;
@@ -169,6 +170,20 @@ public class AuthorController {
         try {
             examService.createNewExamInModule(moduleId, principal, exam);
             return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /*
+     *
+     * @return
+     *   ExamSummary
+     * */
+    @GetMapping("/exam/{examId}/summary")
+    public ResponseEntity<ExamSummary> getExamSummary(@PathVariable String examId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
+        try {
+            return new ResponseEntity<>(examService.getExamSummary(examId), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
