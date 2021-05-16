@@ -3,6 +3,7 @@ package org.alas.backend.controllers;
 import org.alas.backend.dataobjects.exam.ExamSummary;
 import org.alas.backend.services.ExamService;
 import org.alas.backend.services.ModuleService;
+import org.alas.backend.services.SubmissionService;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
 import org.springframework.http.HttpStatus;
@@ -17,10 +18,12 @@ public class CandidateController {
 
     private final ModuleService moduleService;
     private final ExamService examService;
+    private final SubmissionService submissionService;
 
-    public CandidateController(ModuleService moduleService, ExamService examService) {
+    public CandidateController(ModuleService moduleService, ExamService examService, SubmissionService submissionService) {
         this.moduleService = moduleService;
         this.examService = examService;
+        this.submissionService = submissionService;
     }
 
     /*
@@ -77,9 +80,10 @@ public class CandidateController {
     }
 
     @PostMapping("/exam/{examId}/submission")
-    public ResponseEntity<?> addVisit(@PathVariable String examId, KeycloakPrincipal<KeycloakSecurityContext> principal, @RequestBody Object visit) {
+    public ResponseEntity<?> addVisit(@PathVariable String examId, KeycloakPrincipal<KeycloakSecurityContext> principal, @RequestBody String visit, @RequestParam String questionType) {
         try {
-            return new ResponseEntity<>(HttpStatus.OK);
+            String candidateId = principal.getKeycloakSecurityContext().getToken().getSubject();
+            return submissionService.newVisit(questionType, visit, candidateId, examId);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
