@@ -7,10 +7,7 @@ import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -74,6 +71,15 @@ public class CandidateController {
     public ResponseEntity<ExamSummary> getExamSummary(@PathVariable String examId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
         try {
             return new ResponseEntity<>(examService.getExamSummary(examId), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/exam/{examId}/submission")
+    public ResponseEntity<?> addVisit(@PathVariable String examId, KeycloakPrincipal<KeycloakSecurityContext> principal, @RequestBody Object visit) {
+        try {
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

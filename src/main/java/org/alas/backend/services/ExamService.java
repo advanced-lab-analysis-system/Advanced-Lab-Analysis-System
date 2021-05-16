@@ -9,8 +9,10 @@ import org.alas.backend.dataobjects.exam.question.mcq.MCQQuestion;
 import org.alas.backend.documents.Batch;
 import org.alas.backend.documents.Exam;
 import org.alas.backend.documents.Module;
+import org.alas.backend.documents.Submission;
 import org.alas.backend.repositories.ExamRepository;
 import org.alas.backend.repositories.ModuleRepository;
+import org.alas.backend.repositories.SubmissionRepository;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
 import org.springframework.stereotype.Service;
@@ -23,11 +25,13 @@ public class ExamService {
     private final ModuleRepository moduleRepository;
     private final ExamRepository examRepository;
     private final BatchService batchService;
+    private final SubmissionRepository submissionRepository;
 
-    public ExamService(ModuleRepository moduleRepository, ExamRepository examRepository, BatchService batchService) {
+    public ExamService(ModuleRepository moduleRepository, ExamRepository examRepository, BatchService batchService, SubmissionRepository submissionRepository) {
         this.moduleRepository = moduleRepository;
         this.examRepository = examRepository;
         this.batchService = batchService;
+        this.submissionRepository = submissionRepository;
     }
 
     public void createNewExamInModule(String moduleId, KeycloakPrincipal<KeycloakSecurityContext> principal, Exam exam) {
@@ -35,9 +39,10 @@ public class ExamService {
             if (moduleRepository.findById(moduleId).isPresent()) {
                 String authorId = principal.getKeycloakSecurityContext().getToken().getSubject();
                 Module module = moduleRepository.findById(moduleId).get();
-                exam.setSubmissions(populateDefaultSubmissions(module.getBatchList()));
                 exam.setAuthorId(authorId);
                 Exam newExam = examRepository.save(exam);
+                newExam.setSubmissions(populateDefaultSubmissions(module.getBatchList(), newExam.getId()));
+                examRepository.save(newExam);
                 module.addNewExam(newExam.getId());
                 moduleRepository.save(module);
             } else {
@@ -48,18 +53,25 @@ public class ExamService {
         }
     }
 
-    public Map<String, Map<String, Map<String, Object>>> populateDefaultSubmissions(List<String> batchList) {
-        Map<String, Map<String, Map<String, Object>>> defaultSubmissionsMap = new HashMap<>();
-        for (String batchId : batchList) {
+    public Map<String, Map<String, Object>> populateDefaultSubmissions(List<String> batchList, String examId) {
+        Map<String, Map<String, Object>> defaultSubmissionsMap = new HashMap<>();
+        Set<String> candidates = new HashSet<>();
+        batchList.forEach(batchId -> {
             Batch batch = batchService.getBatchById(batchId);
-            if (batch != null) {
-                List<String> candidateList = batch.getCandidateList();
-                Map<String, Map<String, Object>> candidateMap = new HashMap<>();
-                for (String candidateId : candidateList)
-                    candidateMap.put(candidateId, new HashMap<>());
-                defaultSubmissionsMap.put(batchId, candidateMap);
-            }
-        }
+            if (batch != null) candidates.addAll(batch.getCandidateList());
+        });
+        List<String> candidateList = new ArrayList<>(candidates);
+
+        candidateList.forEach(candidateId -> {
+            defaultSubmissionsMap.put(candidateId, new HashMap<>());
+            Submission submission = new Submission();
+            submission.setExamId(examId);
+            submission.setCandidateId(candidateId);
+            submission.setSessionStatus("upcoming");
+            submission.setAllSubmissions(new HashMap<>());
+            submissionRepository.save(submission);
+        });
+
         return defaultSubmissionsMap;
     }
 
@@ -83,6 +95,7 @@ public class ExamService {
                 questionList.forEach(question -> {
                     ObjectMapper objectMapper = new ObjectMapper();
                     Question currQuestion = objectMapper.convertValue(question, Question.class);
+                    System.out.println(currQuestion.getQuestionType());
                     switch (currQuestion.getQuestionType()) {
                         case "mcq":
                             newQuestionList.add(objectMapper.convertValue(question, MCQQuestion.class));
