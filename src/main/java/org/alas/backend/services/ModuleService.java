@@ -4,6 +4,7 @@ import org.alas.backend.documents.Batch;
 import org.alas.backend.documents.Module;
 import org.alas.backend.repositories.BatchRepository;
 import org.alas.backend.repositories.ModuleRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -11,17 +12,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 @Service
 public class ModuleService {
 
-    private final ModuleRepository moduleRepository;
-    private final BatchRepository batchRepository;
+    @Autowired
+    ModuleRepository moduleRepository;
 
-    public ModuleService(ModuleRepository moduleRepository, BatchRepository batchRepository) {
-        this.moduleRepository = moduleRepository;
-        this.batchRepository = batchRepository;
-    }
+    @Autowired
+    BatchRepository batchRepository;
 
     public List<Batch> createModule(Module module) {
         try {

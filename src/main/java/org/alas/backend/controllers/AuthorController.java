@@ -7,8 +7,7 @@ import org.alas.backend.documents.Module;
 import org.alas.backend.services.BatchService;
 import org.alas.backend.services.ExamService;
 import org.alas.backend.services.ModuleService;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.KeycloakSecurityContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,16 +18,14 @@ import java.util.List;
 @RequestMapping("/author")
 public class AuthorController {
 
-    private final ModuleService moduleService;
-    private final ExamService examService;
-    private final BatchService batchService;
+    @Autowired
+    ModuleService moduleService;
 
-    public AuthorController(ModuleService moduleService, ExamService examService, BatchService batchService) {
-        this.moduleService = moduleService;
-        this.examService = examService;
-        this.batchService = batchService;
-    }
+    @Autowired
+    ExamService examService;
 
+    @Autowired
+    BatchService batchService;
 
     /*
      *
@@ -36,7 +33,7 @@ public class AuthorController {
      * */
 
     @GetMapping("/batches")
-    public ResponseEntity<List<Batch>> getAllBatches(KeycloakPrincipal<KeycloakSecurityContext> principal) {
+    public ResponseEntity<List<Batch>> getAllBatches() {
         try {
             return new ResponseEntity<>(batchService.getAllBatches(), HttpStatus.OK);
         } catch (Exception e) {
@@ -54,9 +51,9 @@ public class AuthorController {
      *
      * */
     @GetMapping("/modules")
-    public ResponseEntity<List<Module>> getAllModules(KeycloakPrincipal<KeycloakSecurityContext> principal) {
+    public ResponseEntity<List<Module>> getAllModules() {
         try {
-            String authorId = principal.getKeycloakSecurityContext().getToken().getSubject();
+            String authorId = "testUser";
             return new ResponseEntity<>(moduleService.getAllModulesByAuthorId(authorId), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -78,9 +75,9 @@ public class AuthorController {
      *
      * */
     @PostMapping("/modules")
-    public ResponseEntity<List<Batch>> createNewModule(KeycloakPrincipal<KeycloakSecurityContext> principal, @RequestBody Module module) {
+    public ResponseEntity<List<Batch>> createNewModule(@RequestBody Module module) {
         try {
-            String authorId = principal.getKeycloakSecurityContext().getToken().getSubject();
+            String authorId = "testUser";
             module.setOriginalAuthor(authorId);
             return new ResponseEntity<>(moduleService.createModule(module), HttpStatus.OK);
         } catch (Exception e) {
@@ -94,9 +91,9 @@ public class AuthorController {
      *  Module Object
      * */
     @GetMapping("/module/{moduleId}")
-    public ResponseEntity<Module> getModuleData(@PathVariable String moduleId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
+    public ResponseEntity<Module> getModuleData(@PathVariable String moduleId) {
 //        TODO: write logic here
-        String authorId = principal.getKeycloakSecurityContext().getToken().getSubject();
+        String authorId = "testUser";
         try {
             Module module = moduleService.getModuleForAuthor(moduleId, authorId);
             return new ResponseEntity<>(module, HttpStatus.OK);
@@ -118,7 +115,7 @@ public class AuthorController {
      *
      * */
     @PutMapping("/module/{moduleId}")
-    public ResponseEntity<?> updateModuleData(@PathVariable String moduleId, @RequestBody Module module, KeycloakPrincipal<KeycloakSecurityContext> principal) {
+    public ResponseEntity<?> updateModuleData(@PathVariable String moduleId, @RequestBody Module module) {
 //        TODO: write logic here
         try {
             moduleService.updateModuleById(moduleId, module);
@@ -141,7 +138,7 @@ public class AuthorController {
      *
      * */
     @DeleteMapping("/module/{moduleId}")
-    public ResponseEntity<?> deleteModule(@PathVariable String moduleId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
+    public ResponseEntity<?> deleteModule(@PathVariable String moduleId) {
 //        TODO: Write logic here
         try {
             moduleService.deleteModuleById(moduleId);
@@ -153,7 +150,7 @@ public class AuthorController {
     }
 
     @GetMapping("/module/{moduleId}/exams")
-    public ResponseEntity<?> getAllAuthorExams(@PathVariable String moduleId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
+    public ResponseEntity<?> getAllAuthorExams(@PathVariable String moduleId) {
         try {
             return new ResponseEntity<>(moduleService.getAllExamsByModuleId(moduleId), HttpStatus.OK);
         } catch (Exception e) {
@@ -166,9 +163,9 @@ public class AuthorController {
      * Create a new Exam
      * */
     @PostMapping("/module/{moduleId}/exams")
-    public ResponseEntity<String> createExam(@RequestBody Exam exam, @PathVariable String moduleId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
+    public ResponseEntity<String> createExam(@RequestBody Exam exam, @PathVariable String moduleId) {
         try {
-            examService.createNewExamInModule(moduleId, principal, exam);
+            examService.createNewExamInModule(moduleId, exam);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -181,7 +178,7 @@ public class AuthorController {
      *   ExamSummary
      * */
     @GetMapping("/exam/{examId}/summary")
-    public ResponseEntity<ExamSummary> getExamSummary(@PathVariable String examId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
+    public ResponseEntity<ExamSummary> getExamSummary(@PathVariable String examId) {
         try {
             return new ResponseEntity<>(examService.getExamSummary(examId), HttpStatus.OK);
         } catch (Exception e) {
@@ -195,7 +192,7 @@ public class AuthorController {
      *  Exam Object by given examId
      * */
     @GetMapping("/exam/{examId}")
-    public ResponseEntity<?> getExamWithAnswersById(@PathVariable String examId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
+    public ResponseEntity<?> getExamWithAnswersById(@PathVariable String examId) {
         try {
             return new ResponseEntity<>(examService.getExamByExamId(examId), HttpStatus.OK);
         } catch (Exception e) {
@@ -215,7 +212,7 @@ public class AuthorController {
      *   else: error
      * */
     @PutMapping("/exam/{examId}")
-    public ResponseEntity<?> updateExamByExamId(@PathVariable String examId, @RequestBody Exam exam, KeycloakPrincipal<KeycloakSecurityContext> principal) {
+    public ResponseEntity<?> updateExamByExamId(@PathVariable String examId, @RequestBody Exam exam) {
 //        TODO: Write logic here
         try {
             examService.updateExamByExamId(examId, exam);
@@ -236,7 +233,7 @@ public class AuthorController {
      *   else: error
      * */
     @DeleteMapping("module/{moduleId}/exam/{examId}")
-    public ResponseEntity<?> deleteExamByExamId(@PathVariable String examId, @PathVariable String moduleId, KeycloakPrincipal<KeycloakSecurityContext> principal) {
+    public ResponseEntity<?> deleteExamByExamId(@PathVariable String examId, @PathVariable String moduleId) {
 //        TODO: Write logic here
         try {
             examService.deleteExamByExamId(examId, moduleId);
